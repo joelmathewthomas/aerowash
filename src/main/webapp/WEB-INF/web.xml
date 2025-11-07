@@ -27,7 +27,7 @@
 
   <servlet>
   	<servlet-name>StaffServlet</servlet-name>
-  	<servlet-class>com.aerowash.home.AdminServlet</servlet-class>
+  	<servlet-class>com.aerowash.home.StaffServlet</servlet-class>
   </servlet>
   
   <servlet-mapping>

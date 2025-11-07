@@ -46,8 +46,8 @@ public class AuthServlet extends HttpServlet {
 			ResultSet rs = pst.executeQuery();
 
 			if (rs.next()) {
-				session.setAttribute("username", rs.getString(1));
-				String role = (String) rs.getString(2);
+				session.setAttribute("username", rs.getString(2));
+				String role = (String) rs.getString(4);
 				session.setAttribute("role", role);
 				
 				if (role.equals("admin")) {
@@ -57,7 +57,7 @@ public class AuthServlet extends HttpServlet {
 				}
 				
 			} else {
-				response.getWriter().println("User not found / Wrong Password");
+				response.sendRedirect("status?c=1");
 			}
 
 		} catch (SQLException ex) {
