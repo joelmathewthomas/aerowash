@@ -1,7 +1,6 @@
 package com.aerowash.home;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -25,10 +24,10 @@ public class AdminServlet extends HttpServlet {
 
 			
 			if (session == null) {
-				response.sendRedirect("status?c=2");
+				response.sendRedirect("status?c=2&r=1");
 				return;
 			} else if (!"admin".equals(session.getAttribute("role"))) {
-				response.sendRedirect("status?c=3");
+				response.sendRedirect("status?c=3&r=3");
 				return;
 			}
 		

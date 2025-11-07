@@ -57,7 +57,7 @@ public class AuthServlet extends HttpServlet {
 				}
 				
 			} else {
-				response.sendRedirect("status?c=1");
+				response.sendRedirect("status?c=1&r=1");
 			}
 
 		} catch (SQLException ex) {

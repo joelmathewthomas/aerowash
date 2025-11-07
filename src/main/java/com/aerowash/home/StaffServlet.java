@@ -23,10 +23,10 @@ public class StaffServlet extends HttpServlet {
 			HttpSession session = request.getSession(false);
 			
 			if (session == null) {
-				response.sendRedirect("status?c=2");
+				response.sendRedirect("status?c=2&r=1");
 				return;
 			} else if (!"staff".equals(session.getAttribute("role"))) {
-				response.sendRedirect("status?c=3");
+				response.sendRedirect("status?c=3&r=2");
 				return;
 			}
 
