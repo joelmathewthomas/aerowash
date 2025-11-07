@@ -1,0 +1,28 @@
+# Eclipse
+.project
+.classpath
+.settings/
+.factorypath
+
+# Build output
+build/
+bin/
+tmp/
+*.class
+
+# Logs
+*.log
+hs_err_pid*
+replay_pid*
+
+# Packaged files
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
