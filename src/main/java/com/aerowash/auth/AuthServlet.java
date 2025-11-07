@@ -1,13 +1,18 @@
 package com.aerowash.auth;
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
-@WebServlet("/auth")
 public class AuthServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
@@ -17,12 +22,47 @@ public class AuthServlet extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		response.getWriter().append("Served at: ").append(request.getContextPath());
+		response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		doGet(request, response);
+
+		try {
+			Class.forName(getServletContext().getInitParameter("Driver"));
+		} catch (ClassNotFoundException ex) {
+			ex.printStackTrace();
+		}
+
+		try (Connection conn = DriverManager.getConnection(getServletContext().getInitParameter("DbUrl"),
+				getServletContext().getInitParameter("DbUser"), getServletContext().getInitParameter("DbPassword"))) {
+			// Session Tracking
+			HttpSession session = request.getSession();
+
+			PreparedStatement pst = conn
+					.prepareStatement("SELECT * FROM users WHERE username = ? AND user_password = ?");
+			pst.setString(1, request.getParameter("username"));
+			pst.setString(2, request.getParameter("password"));
+			ResultSet rs = pst.executeQuery();
+
+			if (rs.next()) {
+				session.setAttribute("username", rs.getString(1));
+				String role = (String) rs.getString(2);
+				session.setAttribute("role", role);
+				
+				if (role.equals("admin")) {
+					response.sendRedirect("admin");
+				} else if (role.equals("staff")) {
+					response.sendRedirect("staff");
+				}
+				
+			} else {
+				response.getWriter().println("User not found / Wrong Password");
+			}
+
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+		}
 	}
 
 }

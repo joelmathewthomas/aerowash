@@ -4,4 +4,56 @@
   <welcome-file-list>
     <welcome-file>index.html</welcome-file>
   </welcome-file-list>
+  
+  <servlet>
+  	<servlet-name>AuthServlet</servlet-name>
+  	<servlet-class>com.aerowash.auth.AuthServlet</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+  	<servlet-name>AuthServlet</servlet-name>
+  	<url-pattern>/auth</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+  	<servlet-name>AdminServlet</servlet-name>
+  	<servlet-class>com.aerowash.home.AdminServlet</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+  	<servlet-name>AdminServlet</servlet-name>
+  	<url-pattern>/admin</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+  	<servlet-name>StaffServlet</servlet-name>
+  	<servlet-class>com.aerowash.home.AdminServlet</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+  	<servlet-name>StaffServlet</servlet-name>
+  	<url-pattern>/staff</url-pattern>
+  </servlet-mapping>
+
+
+   <context-param>
+  	<param-name>Driver</param-name>
+  	<param-value>com.mysql.cj.jdbc.Driver</param-value>
+  </context-param>
+ 
+  <context-param>
+  	<param-name>DbUrl</param-name>
+  	<param-value>jdbc:mysql://localhost:3306/aerowash</param-value>
+  </context-param>
+
+  <context-param>
+  	<param-name>DbUser</param-name>
+  	<param-value>root</param-value>
+  </context-param>
+
+  <context-param>
+  	<param-name>DbPassword</param-name>
+  	<param-value>password</param-value>
+  </context-param>
+
 </web-app>
