@@ -27,8 +27,7 @@ public class StaffAddServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
-		try (Connection conn = DriverManager.getConnection(getServletContext().getInitParameter("DbUrl"),
-				getServletContext().getInitParameter("DbUser"), getServletContext().getInitParameter("DbPassword"))) {
+		try {
 			// Session Tracking
 			HttpSession session = request.getSession();
 
@@ -179,7 +178,7 @@ public class StaffAddServlet extends HttpServlet {
 					+ "");
 			out.close();
 
-		} catch (SQLException ex) {
+		} catch (Exception ex) {
 			response.sendRedirect("status");
 			ex.printStackTrace();
 		}
@@ -258,25 +257,69 @@ public class StaffAddServlet extends HttpServlet {
 			    response.sendRedirect("status?c=4&r=4&e=" + error);
 			    return;
 			}
+			
+			// Check if user exists
+			PreparedStatement pst  = conn.prepareStatement("SELECT username FROM users WHERE username = ?");
+			ResultSet rs;
+			pst.setString(1, username);
+			if (pst.executeQuery().next()) {
+				response.sendRedirect("status?c=4&r=4&e=" + "Staff already exists!");
+				return;
+			}
 
 			// Insert into user table
-			PreparedStatement pst = conn.prepareStatement("INSERT INTO `aerowash`.`users` (`username`, `user_password`, `user_role`) VALUES (? , ?, 'staff')", Statement.RETURN_GENERATED_KEYS);
+			pst = conn.prepareStatement("INSERT INTO `aerowash`.`users` (`username`, `user_password`, `user_role`) VALUES (? , ?, 'staff')", Statement.RETURN_GENERATED_KEYS);
 			
 			pst.setString(1, username);
 			pst.setString(2, password);
-			ResultSet rs  =  pst.getGeneratedKeys();
-			System.out.println("user_id is " + rs.getInt(1));
 			
-			// Insert into staff table
-//			if (mname == null || mname.trim().isEmpty()) {
-//				pst = conn.prepareStatement("");
-//			}
-//			rs = pst.executeQuery();
+			// If record is added to table users
+			if (pst.executeUpdate() == 1) {
+				rs  =  pst.getGeneratedKeys();
+				if (rs.next()) {
+					int user_id = rs.getInt(1);
+					
+					pst = conn.prepareStatement("INSERT INTO `aerowash`.`staff` (`user_id`, `staff_fname`, `staff_mname`, `staff_lname`, `staff_phone`, `staff_email`, `staff_address`, `staff_aadhaar`, `staff_status`) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+					pst.setInt(1, user_id);
+					pst.setString(2, fname);
+					
+					if (mname.trim().isEmpty()) {
+						pst.setNull(3, java.sql.Types.VARCHAR);
+					} else {
+						pst.setString(3, mname);
+					}
+					
+					pst.setString(4, lname);
+					pst.setString(5, phone);
+					pst.setString(6, email);
+					pst.setString(7, address);
+					pst.setString(8, aadhaar);
+					pst.setString(9, status);
+				
+					// If record is added to table staff;
+					if (pst.executeUpdate() == 1) {
+						rs = pst.getGeneratedKeys();
+						if (rs.next()) {
+							int staff_id = rs.getInt(1);
+							pst = conn.prepareStatement("INSERT INTO `aerowash`.`bank` (`staff_id`, `bank_ifsc_code`, `bank_account_no`) VALUES (?, ?, ?)");
+							pst.setInt(1, staff_id);
+							pst.setString(2, ifsc);
+							pst.setString(3, account);
 
-			PrintWriter out = response.getWriter();
-
-			response.setContentType("text/html");
-
+							if (pst.executeUpdate() == 1) {
+								response.sendRedirect("scrud");
+							} else {
+								response.sendRedirect("status");
+							}
+						}
+					} else {
+						response.sendRedirect("status");
+					}
+				}
+			} else {
+				response.sendRedirect("status");
+			}
+			
 		} catch (SQLException ex) {
 			response.sendRedirect("status");
 			ex.printStackTrace();
