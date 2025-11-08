@@ -15,9 +15,9 @@ public class StatusServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	private static final Map<Integer, String> MESSAGES = Map.of(1, "Invalid username or password.", 2,
-			"Please login to continue.", 3, "You are not authorized to view this page.");
+			"Please login to continue.", 3, "You are not authorized to view this page.", 4, "Invalid form data!");
 
-	private static final Map<Integer, String> ROUTES = Map.of(1, "/aerowash", 2, "admin", 3, "staff");
+	private static final Map<Integer, String> ROUTES = Map.of(1, "/aerowash", 2, "admin", 3, "staff", 4, "scrud");
 
 	public StatusServlet() {
 		super();
@@ -27,6 +27,8 @@ public class StatusServlet extends HttpServlet {
 			throws ServletException, IOException {
 		int code = 0;
 		int route = 1;
+		String error = null;
+		String message = null;
 
 		if (request.getParameter("c") != null && request.getParameter("c").matches("\\d+")) {
 		    code = Integer.parseInt(request.getParameter("c"));
@@ -34,6 +36,16 @@ public class StatusServlet extends HttpServlet {
 		
 		if (request.getParameter("r") != null && request.getParameter("r").matches("\\d+")) {
 			route = Integer.parseInt(request.getParameter("r"));
+		}
+
+		if (request.getParameter("e") != null && request.getParameter("e").matches("\\D+")) {
+			error = request.getParameter("e");
+		}
+		
+		if (error != null) {
+			message = MESSAGES.getOrDefault(code, "Unkown error occured!") + ": " + error;
+		} else {
+			message = MESSAGES.getOrDefault(code, "Unkown error occured!");
 		}
 
 		PrintWriter out = response.getWriter();
@@ -50,7 +62,7 @@ public class StatusServlet extends HttpServlet {
    				+ "    <h1 style=\"text-align: center; margin-bottom: 5px;\">AeroWash</h1>\n"
 				+ "    <hr>\n"
 				+ "\n"
-				+ "    <p>" + MESSAGES.getOrDefault(code, "Unkown error occured!") + "</p>\n"
+				+ "    <p>" + message + "</p>\n"
 				+ "\n"
 				+ "    <a href=\"" + ROUTES.getOrDefault(route, "/aerowash") + "\" style=\"display:inline-block; margin-top:15px; text-decoration:none;\">\n"
 				+ "        Go Back\n"

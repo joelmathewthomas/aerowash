@@ -63,7 +63,7 @@ public class StaffCrudServlet extends HttpServlet {
 					+ "\n"
 					+ "      <ul style=\"line-height: 1.8; margin-left: 0; padding-left: 15px\">\n"
 					+ "        <li><a href=\"admin\">Home</a></li>\n"
-					+ "        <li><a href=\"#\">Add staff</a></li>\n"
+					+ "        <li><a href=\"sadd\">Add staff</a></li>\n"
 					+ "      </ul>\n"
 					+ "    </div>\n"
 					+ "\n"
