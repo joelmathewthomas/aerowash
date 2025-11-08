@@ -38,6 +38,7 @@ public class StatusServlet extends HttpServlet {
 
 		PrintWriter out = response.getWriter();
 
+		response.setContentType("text/html");
 		out.println("<!DOCTYPE html>\n"
 				+ "<html>\n"
 				+ "<head>\n"

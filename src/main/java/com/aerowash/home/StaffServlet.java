@@ -29,6 +29,7 @@ public class StaffServlet extends HttpServlet {
 				return;
 			}
 
+			response.setContentType("text/html");
 			response.getWriter().println("<!DOCTYPE html>\n"
 					+ "<html>\n"
 					+ "<head>\n"

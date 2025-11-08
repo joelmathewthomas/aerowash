@@ -46,6 +46,8 @@ public class StaffCrudServlet extends HttpServlet {
 			ResultSet rs = pst.executeQuery();
 			
 			PrintWriter out = response.getWriter();
+			
+			response.setContentType("text/html");
 			out.println("<!DOCTYPE html>\n"
 					+ "<html>\n"
 					+ "  <head>\n"
