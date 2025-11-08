@@ -45,6 +45,16 @@
   	<url-pattern>/scrud</url-pattern>
   </servlet-mapping>
 
+  <servlet>
+  	<servlet-name>StaffAddServlet</servlet-name>
+  	<servlet-class>com.aerowash.staff.StaffAddServlet</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+  	<servlet-name>StaffAddServlet</servlet-name>
+  	<url-pattern>/sadd</url-pattern>
+  </servlet-mapping>
+
    <context-param>
   	<param-name>Driver</param-name>
   	<param-value>com.mysql.cj.jdbc.Driver</param-value>
