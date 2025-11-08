@@ -35,6 +35,15 @@
   	<url-pattern>/staff</url-pattern>
   </servlet-mapping>
 
+  <servlet>
+  	<servlet-name>StaffCrudServlet</servlet-name>
+  	<servlet-class>com.aerowash.staff.StaffCrudServlet</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+  	<servlet-name>StaffCrudServlet</servlet-name>
+  	<url-pattern>/scrud</url-pattern>
+  </servlet-mapping>
 
    <context-param>
   	<param-name>Driver</param-name>

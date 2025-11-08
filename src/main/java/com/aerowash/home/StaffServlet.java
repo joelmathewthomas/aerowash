@@ -1,7 +1,6 @@
 package com.aerowash.home;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -36,9 +35,9 @@ public class StaffServlet extends HttpServlet {
 					+ "    <meta charset=\"UTF-8\">\n"
 					+ "    <title>AeroWash</title>\n"
 					+ "</head>\n"
-					+ "<body style=\"font-family: Arial, sans-serif;\">\n"
+					+ "<body style=\"font-family: Arial, sans-serif; margin: 20px\">\n"
 					+ "\n"
-					+ "    <h1>AeroWash</h1>\n"
+    				+ "    <h1 style=\"text-align: center; margin-bottom: 5px;\">AeroWash</h1>\n"
 					+ "    <hr>\n"
 					+ "\n"
 					+ "    <h2>Welcome, " + session.getAttribute("username") + "</h2>\n"
