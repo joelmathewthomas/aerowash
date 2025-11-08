@@ -61,6 +61,7 @@ public class AuthServlet extends HttpServlet {
 			}
 
 		} catch (SQLException ex) {
+			response.sendRedirect("status");
 			ex.printStackTrace();
 		}
 	}
