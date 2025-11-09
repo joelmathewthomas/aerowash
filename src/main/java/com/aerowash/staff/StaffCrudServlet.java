@@ -135,7 +135,7 @@ public class StaffCrudServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+		response.sendRedirect("status");
 	}
 
 }
