@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import com.aerowash.auth.Auth;
 
 public class StaffServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -21,11 +22,7 @@ public class StaffServlet extends HttpServlet {
 			// Session Tracking
 			HttpSession session = request.getSession(false);
 			
-			if (session == null) {
-				response.sendRedirect("status?c=2&r=1");
-				return;
-			} else if (!"staff".equals(session.getAttribute("role"))) {
-				response.sendRedirect("status?c=3&r=2");
+			if (!Auth.checkSession(response, session, "staff", 3, 2)) {
 				return;
 			}
 

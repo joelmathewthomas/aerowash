@@ -8,13 +8,13 @@ import java.sql.Statement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import com.aerowash.auth.Auth;
 
 @WebServlet("/StaffAddServlet")
 public class StaffAddServlet extends HttpServlet {
@@ -29,13 +29,9 @@ public class StaffAddServlet extends HttpServlet {
 
 		try {
 			// Session Tracking
-			HttpSession session = request.getSession();
-
-			if (session == null) {
-				response.sendRedirect("status?c=2&r=1");
-				return;
-			} else if (!"admin".equals(session.getAttribute("role"))) {
-				response.sendRedirect("status?c=3&r=3");
+			HttpSession session = request.getSession(false);
+			
+			if (!Auth.checkSession(response, session, "admin", 3, 3)) {
 				return;
 			}
 
@@ -197,13 +193,9 @@ public class StaffAddServlet extends HttpServlet {
 		try (Connection conn = DriverManager.getConnection(getServletContext().getInitParameter("DbUrl"),
 				getServletContext().getInitParameter("DbUser"), getServletContext().getInitParameter("DbPassword"))) {
 			// Session Tracking
-			HttpSession session = request.getSession();
-
-			if (session == null) {
-				response.sendRedirect("status?c=2&r=1");
-				return;
-			} else if (!"admin".equals(session.getAttribute("role"))) {
-				response.sendRedirect("status?c=3&r=3");
+			HttpSession session = request.getSession(false);
+			
+			if (!Auth.checkSession(response, session, "admin", 3, 3)) {
 				return;
 			}
 
