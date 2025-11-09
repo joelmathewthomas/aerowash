@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import com.aerowash.auth.Auth;
 
 public class StaffCrudServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -32,13 +33,9 @@ public class StaffCrudServlet extends HttpServlet {
 		try (Connection conn = DriverManager.getConnection(getServletContext().getInitParameter("DbUrl"),
 				getServletContext().getInitParameter("DbUser"), getServletContext().getInitParameter("DbPassword"))) {
 			// Session Tracking
-			HttpSession session = request.getSession();
+			HttpSession session = request.getSession(false);
 
-			if (session == null) {
-				response.sendRedirect("status?c=2&r=1");
-				return;
-			} else if (!"admin".equals(session.getAttribute("role"))) {
-				response.sendRedirect("status?c=3&r=3");
+			if (!Auth.checkSession(response, session, "admin", 3, 3)) {
 				return;
 			}
 
@@ -63,7 +60,7 @@ public class StaffCrudServlet extends HttpServlet {
 					+ "\n"
 					+ "      <ul style=\"line-height: 1.8; margin-left: 0; padding-left: 15px\">\n"
 					+ "        <li><a href=\"admin\">Home</a></li>\n"
-					+ "        <li><a href=\"#\">Add staff</a></li>\n"
+					+ "        <li><a href=\"sadd\">Add staff</a></li>\n"
 					+ "      </ul>\n"
 					+ "    </div>\n"
 					+ "\n"
@@ -138,7 +135,7 @@ public class StaffCrudServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+		response.sendRedirect("status");
 	}
 
 }

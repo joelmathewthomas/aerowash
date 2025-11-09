@@ -4,16 +4,14 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import com.aerowash.auth.Auth;
 
 @WebServlet("/StaffAddServlet")
 public class StaffAddServlet extends HttpServlet {
@@ -25,31 +23,17 @@ public class StaffAddServlet extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+
 		try {
-			Class.forName(getServletContext().getInitParameter("Driver"));
-		} catch (ClassNotFoundException ex) {
-			ex.printStackTrace();
-		}
-
-		try (Connection conn = DriverManager.getConnection(getServletContext().getInitParameter("DbUrl"),
-				getServletContext().getInitParameter("DbUser"), getServletContext().getInitParameter("DbPassword"))) {
 			// Session Tracking
-			HttpSession session = request.getSession();
+			HttpSession session = request.getSession(false);
 
-			if (session == null) {
-				response.sendRedirect("status?c=2&r=1");
-				return;
-			} else if (!"admin".equals(session.getAttribute("role"))) {
-				response.sendRedirect("status?c=3&r=3");
+			if (!Auth.checkSession(response, session, "admin", 3, 3)) {
 				return;
 			}
 
-			PreparedStatement pst = conn.prepareStatement(
-					"SELECT * FROM staff s JOIN users u ON s.user_id = u.user_id LEFT JOIN bank b ON b.staff_id = s.staff_id;");
-			ResultSet rs = pst.executeQuery();
-
 			PrintWriter out = response.getWriter();
-			
+
 			response.setContentType("text/html");
 			out.println("<!DOCTYPE html>\n"
 					+ "<html>\n"
@@ -65,7 +49,7 @@ public class StaffAddServlet extends HttpServlet {
 					+ "      <h3>Menu</h3>\n"
 					+ "\n"
 					+ "      <ul style=\"line-height: 1.8; margin-left: 0; padding-left: 15px\">\n"
-					+ "        <li><a href=\"#\">Home</a></li>\n"
+					+ "        <li><a href=\"scrud\">Staff</a></li>\n"
 					+ "      </ul>\n"
 					+ "    </div>\n"
 					+ "\n"
@@ -74,12 +58,7 @@ public class StaffAddServlet extends HttpServlet {
 					+ "    <form action=\"sadd\" method=\"POST\" style=\"margin-top: 20px; line-height: 1.8\">\n"
 					+ "      <div>\n"
 					+ "        <label>Username</label><br />\n"
-					+ "        <input\n"
-					+ "          type=\"text\"\n"
-					+ "          name=\"username\"\n"
-					+ "          required\n"
-					+ "          style=\"padding: 5px; width: 200px\"\n"
-					+ "        />\n"
+					+ "        <input type=\"text\" name=\"username\" required style=\"padding: 5px; width: 200px\" />\n"
 					+ "      </div>\n"
 					+ "\n"
 					+ "      <div style=\"margin-top: 15px\">\n"
@@ -96,32 +75,17 @@ public class StaffAddServlet extends HttpServlet {
 					+ "\n"
 					+ "      <div style=\"margin-top: 15px\">\n"
 					+ "        <label>First Name</label><br />\n"
-					+ "        <input\n"
-					+ "          type=\"text\"\n"
-					+ "          name=\"staff_fname\"\n"
-					+ "          required\n"
-					+ "          style=\"padding: 5px; width: 200px\"\n"
-					+ "        />\n"
+					+ "        <input type=\"text\" name=\"staff_fname\" required style=\"padding: 5px; width: 200px\" />\n"
 					+ "      </div>\n"
 					+ "\n"
 					+ "      <div style=\"margin-top: 15px\">\n"
 					+ "        <label>Middle Name</label><br />\n"
-					+ "        <input\n"
-					+ "          type=\"text\"\n"
-					+ "          name=\"staff_mname\"\n"
-					+ "          required\n"
-					+ "          style=\"padding: 5px; width: 200px\"\n"
-					+ "        />\n"
+					+ "        <input type=\"text\" name=\"staff_mname\" style=\"padding: 5px; width: 200px\" />\n"
 					+ "      </div>\n"
 					+ "\n"
 					+ "      <div style=\"margin-top: 15px\">\n"
 					+ "        <label>Last Name</label><br />\n"
-					+ "        <input\n"
-					+ "          type=\"text\"\n"
-					+ "          name=\"staff_lname\"\n"
-					+ "          required\n"
-					+ "          style=\"padding: 5px; width: 200px\"\n"
-					+ "        />\n"
+					+ "        <input type=\"text\" name=\"staff_lname\" required style=\"padding: 5px; width: 200px\" />\n"
 					+ "      </div>\n"
 					+ "\n"
 					+ "      <div style=\"margin-top: 15px\">\n"
@@ -142,7 +106,7 @@ public class StaffAddServlet extends HttpServlet {
 					+ "          type=\"email\"\n"
 					+ "          name=\"staff_email\"\n"
 					+ "          required\n"
-					+ "          pattern=\"^[^\\\\s@]+@[^\\\\s@]+\\\\.[^\\\\s@]+$\"\n"
+					+ "          pattern=\"^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$\"\n"
 					+ "          title=\"Enter a valid email\"\n"
 					+ "          style=\"padding: 5px; width: 200px\"\n"
 					+ "        />\n"
@@ -150,12 +114,7 @@ public class StaffAddServlet extends HttpServlet {
 					+ "\n"
 					+ "      <div style=\"margin-top: 15px\">\n"
 					+ "        <label>Address</label><br />\n"
-					+ "        <input\n"
-					+ "          type=\"text\"\n"
-					+ "          name=\"staff_address\"\n"
-					+ "          required\n"
-					+ "          style=\"padding: 5px; width: 200px\"\n"
-					+ "        />\n"
+					+ "        <input type=\"text\" name=\"staff_address\" required style=\"padding: 5px; width: 200px\" />\n"
 					+ "      </div>\n"
 					+ "\n"
 					+ "      <div style=\"margin-top: 15px\">\n"
@@ -172,22 +131,23 @@ public class StaffAddServlet extends HttpServlet {
 					+ "\n"
 					+ "      <div style=\"margin-top: 15px\">\n"
 					+ "        <label>Status</label><br />\n"
-					+ "        <input\n"
-					+ "          type=\"text\"\n"
-					+ "          name=\"staff_status\"\n"
-					+ "          required\n"
-					+ "          style=\"padding: 5px; width: 200px\"\n"
-					+ "        />\n"
+					+ "\n"
+					+ "        <label>\n"
+					+ "          <input type=\"radio\" name=\"staff_status\" value=\"active\" required />\n"
+					+ "          Active\n"
+					+ "        </label>\n"
+					+ "\n"
+					+ "        <br />\n"
+					+ "\n"
+					+ "        <label>\n"
+					+ "          <input type=\"radio\" name=\"staff_status\" value=\"inactive\" required />\n"
+					+ "          Inactive\n"
+					+ "        </label>\n"
 					+ "      </div>\n"
 					+ "\n"
 					+ "      <div style=\"margin-top: 15px\">\n"
 					+ "        <label>Bank IFSC</label><br />\n"
-					+ "        <input\n"
-					+ "          type=\"text\"\n"
-					+ "          name=\"bank_ifsc\"\n"
-					+ "          required\n"
-					+ "          style=\"padding: 5px; width: 200px\"\n"
-					+ "        />\n"
+					+ "        <input type=\"text\" name=\"bank_ifsc\" required style=\"padding: 5px; width: 200px\" />\n"
 					+ "      </div>\n"
 					+ "\n"
 					+ "      <div style=\"margin-top: 15px\">\n"
@@ -209,10 +169,10 @@ public class StaffAddServlet extends HttpServlet {
 					+ "  </body>\n"
 					+ "</html>\n"
 					+ "");
-			
+
 			out.close();
 
-		} catch (SQLException ex) {
+		} catch (Exception ex) {
 			response.sendRedirect("status");
 			ex.printStackTrace();
 		}
@@ -220,7 +180,49 @@ public class StaffAddServlet extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		doGet(request, response);
-	}
 
+		try {
+			Class.forName(getServletContext().getInitParameter("Driver"));
+		} catch (ClassNotFoundException ex) {
+			ex.printStackTrace();
+		}
+
+		try (Connection conn = DriverManager.getConnection(getServletContext().getInitParameter("DbUrl"),
+				getServletContext().getInitParameter("DbUser"), getServletContext().getInitParameter("DbPassword"))) {
+			// Session Tracking
+			HttpSession session = request.getSession(false);
+
+			if (!Auth.checkSession(response, session, "admin", 3, 3)) {
+				return;
+			}
+
+			Staff staff = Staff.getFromForm(request);
+
+			// Validate form input
+			String error = staff.validateForm();
+
+			if (error != null) {
+				// send error code with parameter so UI can show the exact message
+				response.sendRedirect("status?c=4&r=4&e=" + error);
+				return;
+			}
+
+			// Check for duplicates
+			error = staff.checkDuplicates(conn);
+			if (error != null) {
+				response.sendRedirect("status?c=4&r=4&e=" + error);
+				return;
+			}
+
+			if (staff.addRecord(conn)) {
+				response.sendRedirect("scrud");
+			} else {
+				response.sendRedirect("status");
+			}
+
+		} catch (SQLException ex) {
+			response.sendRedirect("status");
+			ex.printStackTrace();
+		}
+	}
 }
