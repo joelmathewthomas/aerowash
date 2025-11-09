@@ -41,7 +41,7 @@ public class Staff {
 		this.account = sanitizeString(account);
 	}
 
-	// Remove leading and trailing zeroes
+	// Remove leading and trailing whitespace
 	private String sanitizeString(String s) {
 		return s == null ? "" : s.trim();
 	}
@@ -150,12 +150,12 @@ public class Staff {
 		
 		conn.setAutoCommit(false);
 
-		String userSql = "INSERT INTO aerowash.users (username, user_password, user_role) VALUES (?, ?, 'staff')";
+		final String userSql = "INSERT INTO aerowash.users (username, user_password, user_role) VALUES (?, ?, 'staff')";
 
-		String staffSql = "INSERT INTO aerowash.staff (user_id, staff_fname, staff_mname, staff_lname, staff_phone, "
+		final String staffSql = "INSERT INTO aerowash.staff (user_id, staff_fname, staff_mname, staff_lname, staff_phone, "
 				+ "staff_email, staff_address, staff_aadhaar, staff_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-		String bankSql = "INSERT INTO aerowash.bank (staff_id, bank_ifsc_code, bank_account_no) VALUES (?, ?, ?)";
+		final String bankSql = "INSERT INTO aerowash.bank (staff_id, bank_ifsc_code, bank_account_no) VALUES (?, ?, ?)";
 
 		try (PreparedStatement pstUser = conn.prepareStatement(userSql, Statement.RETURN_GENERATED_KEYS)) {
 			// Insert user
