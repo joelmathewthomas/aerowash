@@ -96,25 +96,55 @@ public class StaffCrudServlet extends HttpServlet {
 					+ "        <tbody>\n");
 			
 					while (rs.next()) {
-						out.println("\n"
-								+ "          <tr>\n"
-								+ "            <td>" + rs.getString(12) + "</td>\n"
-								+ "            <td>" + rs.getString(13) + "</td>\n"
-								+ "\n"
-								+ "            <td>" + rs.getString(3) + "</td>\n"
-								+ "            <td>" + rs.getString(4) + "</td>\n"
-								+ "            <td>" + rs.getString(5) + "</td>\n"
-								+ "            <td>" + rs.getString(6) + "</td>\n"
-								+ "            <td>" + rs.getString(7) + "</td>\n"
-								+ "            <td>" + rs.getString(8) + "</td>\n"
-								+ "            <td>" + rs.getString(9) + "</td>\n"
-								+ "            <td>" + rs.getString(10) + "</td>\n"
-								+ "\n"
-								+ "            <td>" + rs.getString(17) + "</td>\n"
-								+ "            <td>" + rs.getString(18) + "</td>\n"
-								+ "            <td style=\"white-space: nowrap\"><a href=\"#\">Edit</a>&nbsp;&nbsp;<a href=\"#\">Delete</a></td>\n"
-								+ "          </tr>\n");
+					    String username = rs.getString(12);
+					    String password = rs.getString(13);
+					    String fname = rs.getString(3);
+					    String mname = rs.getString(4);
+					    String lname = rs.getString(5);
+					    String phone = rs.getString(6);
+					    String email = rs.getString(7);
+					    String address = rs.getString(8);
+					    String aadhaar = rs.getString(9);
+					    String status = rs.getString(10);
+					    String ifsc = rs.getString(17);
+					    String account = rs.getString(18);
+
+					    String editUrl =
+					        "sedit?" +
+					        "username=" + username +
+					        "&password=" + password +
+					        "&fname=" + fname +
+					        "&mname=" + mname +
+					        "&lname=" + lname +
+					        "&phone=" + phone +
+					        "&email=" + email +
+					        "&address=" + address +
+					        "&aadhaar=" + aadhaar +
+					        "&status=" + status +
+					        "&ifsc=" + ifsc +
+					        "&account=" + account;
+
+					    out.println(
+					        "          <tr>\n" +
+					        "            <td>" + username + "</td>\n" +
+					        "            <td>" + password + "</td>\n" +
+					        "            <td>" + fname + "</td>\n" +
+					        "            <td>" + mname + "</td>\n" +
+					        "            <td>" + lname + "</td>\n" +
+					        "            <td>" + phone + "</td>\n" +
+					        "            <td>" + email + "</td>\n" +
+					        "            <td>" + address + "</td>\n" +
+					        "            <td>" + aadhaar + "</td>\n" +
+					        "            <td>" + status + "</td>\n" +
+					        "            <td>" + ifsc + "</td>\n" +
+					        "            <td>" + account + "</td>\n" +
+					        "            <td style=\"white-space: nowrap\">\n" +
+					        "              <a href=\"" + editUrl + "\">Edit</a>&nbsp;|&nbsp;<a href=\"#\">Delete</a>\n" +
+					        "            </td>\n" +
+					        "          </tr>\n"
+					    );
 					}
+
 
 					out.println("        </tbody>\n"
 					+ "      </table>\n"
