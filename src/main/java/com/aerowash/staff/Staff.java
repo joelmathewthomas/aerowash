@@ -182,9 +182,11 @@ public class Staff {
 
 		} catch (SQLIntegrityConstraintViolationException ex) {
 			conn.rollback();
+			ex.printStackTrace();
 			return getDuplicateKey(ex.getMessage());
 		} catch (SQLException ex) {
 			conn.rollback();
+			ex.printStackTrace();
 			return "Failed to add record";
 		}
 	}

@@ -210,7 +210,7 @@ public class StaffAddServlet extends HttpServlet {
 			if (error == null) {
 				response.sendRedirect("scrud");
 			} else {
-				response.sendRedirect("status?c=4&r=3&e=" + error);
+				response.sendRedirect("status?c=4&r=4&e=" + error);
 			}
 
 		} catch (SQLException ex) {
