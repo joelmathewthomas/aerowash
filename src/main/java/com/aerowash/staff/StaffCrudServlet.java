@@ -75,8 +75,8 @@ public class StaffCrudServlet extends HttpServlet {
 					+ "          style=\"background-color: #f2f2f2; font-weight: bold; text-align: left\"\n"
 					+ "        >\n"
 					+ "          <tr>\n"
+					+ "            <th>S.No</th>\n"
 					+ "            <th>Username</th>\n"
-					+ "            <th>Password</th>\n"
 					+ "\n"
 					+ "            <th>First Name</th>\n"
 					+ "            <th>Middle Name</th>\n"
@@ -95,6 +95,7 @@ public class StaffCrudServlet extends HttpServlet {
 					+ "\n"
 					+ "        <tbody>\n");
 			
+					int rowCount = 1;
 					while (rs.next()) {
 					    String username = rs.getString(12);
 					    String password = rs.getString(13);
@@ -126,8 +127,8 @@ public class StaffCrudServlet extends HttpServlet {
 
 					    out.println(
 					        "          <tr>\n" +
+					        "            <td>" + rowCount++ + "</td>\n" +
 					        "            <td>" + username + "</td>\n" +
-					        "            <td>" + password + "</td>\n" +
 					        "            <td>" + fname + "</td>\n" +
 					        "            <td>" + mname + "</td>\n" +
 					        "            <td>" + lname + "</td>\n" +
