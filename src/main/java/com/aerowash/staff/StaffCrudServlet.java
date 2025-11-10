@@ -136,7 +136,7 @@ public class StaffCrudServlet extends HttpServlet {
 					        "            <td>" + email + "</td>\n" +
 					        "            <td>" + address + "</td>\n" +
 					        "            <td>" + aadhaar + "</td>\n" +
-					        "            <td>" + status + "</td>\n" +
+					        "            <td>" + status.substring(0,1).toUpperCase() + status.substring(1) + "</td>\n" +
 					        "            <td>" + ifsc + "</td>\n" +
 					        "            <td>" + account + "</td>\n" +
 					        "            <td style=\"white-space: nowrap\">\n" +
