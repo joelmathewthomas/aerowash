@@ -68,6 +68,17 @@
 		<url-pattern>/sedit</url-pattern>
 	</servlet-mapping>
 
+	<servlet>
+		<servlet-name>StaffDeleteServlet</servlet-name>
+		<servlet-class>com.aerowash.staff.StaffDeleteServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>StaffDeleteServlet</servlet-name>
+		<url-pattern>/sdelete</url-pattern>
+	</servlet-mapping>
+
+
 	<context-param>
 		<param-name>Driver</param-name>
 		<param-value>com.mysql.cj.jdbc.Driver</param-value>

@@ -140,7 +140,7 @@ public class StaffCrudServlet extends HttpServlet {
 					        "            <td>" + ifsc + "</td>\n" +
 					        "            <td>" + account + "</td>\n" +
 					        "            <td style=\"white-space: nowrap\">\n" +
-					        "              <a href=\"" + editUrl + "\">Edit</a>&nbsp;|&nbsp;<a href=\"#\">Delete</a>\n" +
+					        "              <a href=\"" + editUrl + "\">Edit</a>&nbsp;|&nbsp;<a href=\"sdelete?username=" + username + "\">Delete</a>\n" +
 					        "            </td>\n" +
 					        "          </tr>\n"
 					    );

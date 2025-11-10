@@ -242,14 +242,83 @@ public class Staff {
 
 			// All updates succeeded
 			conn.commit();
-			return null;
 		} catch (SQLIntegrityConstraintViolationException ex) {
 			conn.rollback();
+			ex.printStackTrace();
 			return getDuplicateKey(ex.getMessage());
 		} catch (SQLException ex) {
 			conn.rollback();
-			throw ex;
+			ex.printStackTrace();
 		}
+
+		return null;
 	}
 
+	public static String deleteRecord(Connection conn, String username) {
+
+		if (username == null || username.trim().isEmpty()) {
+			return "Invalid username";
+		}
+
+		try (PreparedStatement pst = conn.prepareStatement("SELECT user_id from users WHERE username = ?")) {
+			pst.setString(1, username);
+			ResultSet rs = pst.executeQuery();
+
+			if (!rs.next()) {
+				return "User does not exist";
+			}
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+			return "Failed to check for username in database";
+		}
+
+		try {
+
+			conn.setAutoCommit(false);
+
+			String bankSql = "DELETE FROM bank b WHERE b.staff_id = (SELECT staff_id FROM staff s JOIN users u ON s.user_id = u.user_id WHERE u.username = ?)";
+			String staffSql = "DELETE FROM staff WHERE user_id = (SELECT user_id FROM users WHERE username = ?)";
+			String usersSql = "DELETE FROM users WHERE username = ?";
+
+			// Delete bank record
+			try (PreparedStatement pstBank = conn.prepareStatement(bankSql)) {
+				pstBank.setString(1, username);
+
+				if (pstBank.executeUpdate() != 1) {
+					conn.rollback();
+					return "Failed to delete bank details";
+				}
+
+				try (PreparedStatement pstStaff = conn.prepareStatement(staffSql)) {
+					pstStaff.setString(1, username);
+
+					if (pstStaff.executeUpdate() != 1) {
+						conn.rollback();
+						return "Failed to delete staff details";
+					}
+
+					try (PreparedStatement pstUser = conn.prepareStatement(usersSql)) {
+						pstUser.setString(1, username);
+
+						if (pstUser.executeUpdate() != 1) {
+							conn.rollback();
+							return "Failed to delete staff details";
+
+						}
+					}
+				}
+
+			} catch (SQLException ex) {
+				conn.rollback();
+				ex.printStackTrace();
+				return "Failed to delete records";
+			}
+
+			conn.commit();
+			return null;
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+			return "Failed to delete records: SQLException";
+		}
+	}
 }
