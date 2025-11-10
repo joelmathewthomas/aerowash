@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.Statement;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,6 +24,10 @@ public class Staff {
 	private final String status;
 	private final String ifsc;
 	private final String account;
+
+	public String getUsername() {
+		return username;
+	}
 
 	public Staff(String username, String password, String fname, String mname, String lname, String phone, String email,
 			String address, String aadhaar, String status, String ifsc, String account) {
@@ -85,69 +90,25 @@ public class Staff {
 		return null;
 	}
 
-	public String checkDuplicates(Connection conn) {
-		try {
-
-			// Duplicate username
-			try (PreparedStatement pst = conn.prepareStatement("SELECT user_id FROM users WHERE username = ?")) {
-				pst.setString(1, username);
-				try (ResultSet rs = pst.executeQuery()) {
-					if (rs.next()) {
-						return "username_exists";
-					}
-				}
-			}
-
-			// Duplicate phone
-			try (PreparedStatement pst = conn.prepareStatement("SELECT staff_id FROM staff WHERE staff_phone = ?")) {
-				pst.setString(1, phone);
-				try (ResultSet rs = pst.executeQuery()) {
-					if (rs.next()) {
-						return "phone_exists";
-					}
-				}
-			}
-
-			// Duplicate email
-			try (PreparedStatement pst = conn.prepareStatement("SELECT staff_id FROM staff WHERE staff_email = ?")) {
-				pst.setString(1, email);
-				try (ResultSet rs = pst.executeQuery()) {
-					if (rs.next()) {
-						return "email_exists";
-					}
-				}
-			}
-
-			// Duplicate Aadhaar
-			try (PreparedStatement pst = conn.prepareStatement("SELECT staff_id FROM staff WHERE staff_aadhaar = ?")) {
-				pst.setString(1, aadhaar);
-				try (ResultSet rs = pst.executeQuery()) {
-					if (rs.next()) {
-						return "aadhaar_exists";
-					}
-				}
-			}
-
-			// Duplicate bank account
-			try (PreparedStatement pst = conn.prepareStatement("SELECT bank_id FROM bank WHERE bank_account_no = ?")) {
-				pst.setString(1, account);
-				try (ResultSet rs = pst.executeQuery()) {
-					if (rs.next()) {
-						return "bank_account_exists";
-					}
-				}
-			}
-
+	private String getDuplicateKey(String error) {
+		if (error.contains("username")) {
+			return "user_exists";
+		} else if (error.contains("phone")) {
+			return "duplicate_phone";
+		} else if (error.contains("email")) {
+			return "duplicate_email";
+		} else if (error.contains("aadhaar")) {
+			return "duplicate_aadhaar";
+		} else if (error.contains("account")) {
+			return "duplicate_bank_account";
+		} else {
 			return null;
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return null; 
 		}
+
 	}
 
-	public boolean addRecord(Connection conn) throws SQLException, IOException {
-		
+	public String addRecord(Connection conn) throws SQLException, IOException {
+
 		conn.setAutoCommit(false);
 
 		final String userSql = "INSERT INTO aerowash.users (username, user_password, user_role) VALUES (?, ?, 'staff')";
@@ -164,14 +125,14 @@ public class Staff {
 
 			if (pstUser.executeUpdate() != 1) {
 				conn.rollback();
-				return false;
+				return "Failed to add user details";
 			}
 
 			int userId;
 			try (ResultSet rs = pstUser.getGeneratedKeys()) {
 				if (!rs.next()) {
 					conn.rollback();
-					return false;
+					return "Failed to add user details";
 				}
 				userId = rs.getInt(1);
 			}
@@ -190,14 +151,14 @@ public class Staff {
 
 				if (pstStaff.executeUpdate() != 1) {
 					conn.rollback();
-					return false;
+					return "Failed to add staff details";
 				}
 
 				int staffId;
 				try (ResultSet rs = pstStaff.getGeneratedKeys()) {
 					if (!rs.next()) {
 						conn.rollback();
-						return false;
+						return "Failed to add staff details";
 					}
 					staffId = rs.getInt(1);
 				}
@@ -210,15 +171,81 @@ public class Staff {
 
 					if (pstBank.executeUpdate() != 1) {
 						conn.rollback();
-						return false;
+						return "Failed to add bank details";
 					}
 				}
 			}
 
 			// All inserts succeeded
 			conn.commit();
-			return true;
+			return null;
 
+		} catch (SQLIntegrityConstraintViolationException ex) {
+			conn.rollback();
+			return getDuplicateKey(ex.getMessage());
+		} catch (SQLException ex) {
+			conn.rollback();
+			return "Failed to add record";
+		}
+	}
+
+	public String updateRecord(Connection conn) throws SQLException, IOException {
+
+		conn.setAutoCommit(false);
+
+		final String userSql = "UPDATE users SET user_password = ? WHERE username = ?";
+
+		final String staffSql = "UPDATE staff s JOIN users u ON s.user_id = u.user_id SET s.staff_fname = ?, s.staff_mname = ?, s.staff_lname = ?, "
+				+ "s.staff_phone = ?, s.staff_email = ?, s.staff_address = ?, s.staff_status = ? WHERE u.username = ?";
+
+		final String bankSql = "UPDATE bank JOIN staff ON bank.staff_id = staff.staff_id JOIN users ON staff.user_id = users.user_id "
+				+ "SET bank.bank_ifsc_code = ?, bank.bank_account_no = ? WHERE users.username = ?;";
+
+		try (PreparedStatement pstUser = conn.prepareStatement(userSql)) {
+			// Update user
+			pstUser.setString(1, password);
+			pstUser.setString(2, username);
+
+			if (pstUser.executeUpdate() != 1) {
+				conn.rollback();
+				return "Failed to update user password";
+			}
+
+			// Update staff
+			try (PreparedStatement pstStaff = conn.prepareStatement(staffSql, Statement.RETURN_GENERATED_KEYS)) {
+				pstStaff.setString(1, fname);
+				pstStaff.setString(2, mname.trim().isEmpty() ? null : mname);
+				pstStaff.setString(3, lname);
+				pstStaff.setString(4, phone);
+				pstStaff.setString(5, email);
+				pstStaff.setString(6, address);
+				pstStaff.setString(7, status);
+				pstStaff.setString(8, username);
+
+				if (pstStaff.executeUpdate() != 1) {
+					conn.rollback();
+					return "Failed to update staff details";
+				}
+
+				// Update bank
+				try (PreparedStatement pstBank = conn.prepareStatement(bankSql)) {
+					pstBank.setString(1, ifsc);
+					pstBank.setString(2, account);
+					pstBank.setString(3, username);
+
+					if (pstBank.executeUpdate() != 1) {
+						conn.rollback();
+						return "Failed to update bank details";
+					}
+				}
+			}
+
+			// All updates succeeded
+			conn.commit();
+			return null;
+		} catch (SQLIntegrityConstraintViolationException ex) {
+			conn.rollback();
+			return getDuplicateKey(ex.getMessage());
 		} catch (SQLException ex) {
 			conn.rollback();
 			throw ex;

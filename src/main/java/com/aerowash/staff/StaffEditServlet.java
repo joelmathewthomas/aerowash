@@ -70,7 +70,7 @@ public class StaffEditServlet extends HttpServlet {
 			    + "\n"
 			    + "    <h2>Edit Staff</h2>\n"
 			    + "\n"
-			    + "    <form action=\"supdate\" method=\"POST\" style=\"margin-top: 20px; line-height: 1.8\">\n"
+			    + "    <form action=\"sedit\" method=\"POST\" style=\"margin-top: 20px; line-height: 1.8\">\n"
 			    + "      <div>\n"
 			    + "        <label>Username</label><br />\n"
 			    + "        <input type=\"text\" name=\"username\" value=\"" + username + "\" required style=\"padding: 5px; width: 200px\" readonly />\n"
@@ -174,18 +174,13 @@ public class StaffEditServlet extends HttpServlet {
 				return;
 			}
 
-			// Check for duplicates
-			error = staff.checkDuplicates(conn);
-			if (error != null) {
-				response.sendRedirect("status?c=4&r=4&e=" + error);
-				return;
-			}
-
-			// Add record to table
-			if (staff.addRecord(conn)) {
+			
+			error = staff.updateRecord(conn);
+			// Update record in table
+			if (error == null) {
 				response.sendRedirect("scrud");
 			} else {
-				response.sendRedirect("status");
+				response.sendRedirect("status?c=4&r=3&e=" + error);
 			}
 
 		} catch (SQLException ex) {

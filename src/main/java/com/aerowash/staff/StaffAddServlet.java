@@ -205,18 +205,12 @@ public class StaffAddServlet extends HttpServlet {
 				return;
 			}
 
-			// Check for duplicates
-			error = staff.checkDuplicates(conn);
-			if (error != null) {
-				response.sendRedirect("status?c=4&r=4&e=" + error);
-				return;
-			}
-
+			error = staff.addRecord(conn);
 			// Add record to table
-			if (staff.addRecord(conn)) {
+			if (error == null) {
 				response.sendRedirect("scrud");
 			} else {
-				response.sendRedirect("status");
+				response.sendRedirect("status?c=4&r=3&e=" + error);
 			}
 
 		} catch (SQLException ex) {
