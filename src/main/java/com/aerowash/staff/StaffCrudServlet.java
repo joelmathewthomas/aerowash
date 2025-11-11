@@ -100,7 +100,7 @@ public class StaffCrudServlet extends HttpServlet {
 					    String username = rs.getString(12);
 					    String password = rs.getString(13);
 					    String fname = rs.getString(3);
-					    String mname = rs.getString(4);
+					    String mname = (rs.getString(4) == null) ? "" : rs.getString(4);
 					    String lname = rs.getString(5);
 					    String phone = rs.getString(6);
 					    String email = rs.getString(7);
