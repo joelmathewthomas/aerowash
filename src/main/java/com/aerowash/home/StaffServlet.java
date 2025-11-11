@@ -44,7 +44,7 @@ public class StaffServlet extends HttpServlet {
 					+ "        <h3>Menu</h3>\n"
 					+ "\n"
 					+ "        <ul style=\"line-height: 1.8;\">\n"
-					+ "            <li><a href=\"#\">Staff</a></li>\n"
+					+ "            <li><a href=\"customers\">Customers</a></li>\n"
 					+ "            <li><a href=\"#\">Attendance</a></li>\n"
 					+ "            <li><a href=\"#\">Expense</a></li>\n"
 					+ "            <li><a href=\"#\">Payments</a></li>\n"
