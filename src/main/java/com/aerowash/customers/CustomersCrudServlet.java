@@ -61,7 +61,7 @@ public class CustomersCrudServlet extends HttpServlet {
 					+ "\n"
 					+ "      <ul style=\"line-height: 1.8; margin-left: 0; padding-left: 15px\">\n"
 					+ "        <li><a href=\"admin\">Home</a></li>\n"
-					+ "        <li><a href=\"sadd\">Add customer</a></li>\n"
+					+ "        <li><a href=\"cadd\">Add customer</a></li>\n"
 					+ "      </ul>\n"
 					+ "    </div>\n"
 					+ "\n"
