@@ -91,7 +91,7 @@ public class Customer {
 
 		conn.setAutoCommit(false);
 
-		final String sql = "UPDATE customer SET customer_fname = ?, customer_mname = ?, customer_lnmame = ?, customer_phone = ? WHERE customer_id = ?";
+		final String sql = "UPDATE customer SET customer_fname = ?, customer_mname = ?, customer_lname = ?, customer_phone = ? WHERE customer_id = ?";
 
 		try (PreparedStatement pst = conn.prepareStatement(sql)) {
 			// Update customer
@@ -115,6 +115,7 @@ public class Customer {
 		} catch (SQLException ex) {
 			conn.rollback();
 			ex.printStackTrace();
+			return "Failed to update customer details";
 		}
 
 		return null;

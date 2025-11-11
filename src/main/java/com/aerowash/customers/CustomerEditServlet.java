@@ -2,6 +2,9 @@ package com.aerowash.customers;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -132,7 +135,7 @@ public class CustomerEditServlet extends HttpServlet {
 					+ "  </body>\n"
 					+ "</html>\n"
 					+ "");
-			
+
 			out.close();
 
 		} catch (Exception ex) {
@@ -143,7 +146,46 @@ public class CustomerEditServlet extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		doGet(request, response);
+		try {
+			Class.forName(getServletContext().getInitParameter("Driver"));
+		} catch (ClassNotFoundException ex) {
+			ex.printStackTrace();
+		}
+
+		try (Connection conn = DriverManager.getConnection(getServletContext().getInitParameter("DbUrl"),
+				getServletContext().getInitParameter("DbUser"), getServletContext().getInitParameter("DbPassword"))) {
+			// Session Tracking
+			HttpSession session = request.getSession(false);
+			int customer_id = (request.getParameter("customer_id") == null) ? 0 : Integer.parseInt(request.getParameter("customer_id"));
+			
+			if (!Auth.checkSession(response, session, "staff", 3, 2)) {
+				return;
+			}
+
+			Customer customer = Customer.getFromForm(request);
+
+			// Validate form input
+			String error = customer.validateForm();
+
+			if (error != null) {
+				// send error code with parameter so UI can show the exact message
+				response.sendRedirect("status?c=4&r=5&e=" + error);
+				return;
+			}
+
+			error = customer.updateRecord(conn, customer_id);
+			// Update record in table
+			if (error == null) {
+				response.sendRedirect("customers");
+			} else {
+				response.sendRedirect("status?c=4&r=5&e=" + error);
+			}
+
+		} catch (SQLException ex) {
+			response.sendRedirect("status");
+			ex.printStackTrace();
+		}
+
 	}
 
 }
