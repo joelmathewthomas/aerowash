@@ -60,7 +60,7 @@ public class CustomersCrudServlet extends HttpServlet {
 					+ "      <h3>Menu</h3>\n"
 					+ "\n"
 					+ "      <ul style=\"line-height: 1.8; margin-left: 0; padding-left: 15px\">\n"
-					+ "        <li><a href=\"admin\">Home</a></li>\n"
+					+ "        <li><a href=\"staff\">Home</a></li>\n"
 					+ "        <li><a href=\"cadd\">Add customer</a></li>\n"
 					+ "      </ul>\n"
 					+ "    </div>\n"
@@ -88,13 +88,15 @@ public class CustomersCrudServlet extends HttpServlet {
 					+ "        <tbody>\n");
 
 					while (rs.next()) {
-					
+						
 						int cid = rs.getInt(1);
 						String fname = rs.getString(2);
 						String mname = (rs.getString(3) == null) ? "" : rs.getString(3);
 						String lname = rs.getString(4);
 						String phone = rs.getString(5);
 					
+						String editUrl = "cedit?cid=" + cid + "&fname=" + fname + "&mname=" + mname + "&lname=" + lname + "&phone=" + phone;
+
 						out.println("\n"
 								+ "          <tr>\n"
 								+ "            <td>" + cid + "</td>\n"
@@ -105,7 +107,7 @@ public class CustomersCrudServlet extends HttpServlet {
 								+ "            <td style=\"white-space: nowrap\">\n"
 								+ "              <a href=\"cedit?id=1001\">Flat</a> |\n"
 								+ "              <a href=\"cedit?id=1001\">Vehicles</a> |\n"
-								+ "              <a href=\"cedit?id=1001\">Edit</a> |\n"
+								+ "              <a href=\"" + editUrl +"\">Edit</a> |\n"
 								+ "              <a href=\"cdelete?id=1001\">Delete</a>\n"
 								+ "            </td>\n"
 								+ "          </tr>\n");

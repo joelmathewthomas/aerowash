@@ -98,6 +98,17 @@
 		<url-pattern>/cadd</url-pattern>
 	</servlet-mapping>
 
+	<servlet>
+		<servlet-name>CustomerEditServlet</servlet-name>
+		<servlet-class>com.aerowash.customers.CustomerEditServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>CustomerEditServlet</servlet-name>
+		<url-pattern>/cedit</url-pattern>
+	</servlet-mapping>
+
+
 	<context-param>
 		<param-name>Driver</param-name>
 		<param-value>com.mysql.cj.jdbc.Driver</param-value>
