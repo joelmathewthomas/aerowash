@@ -74,7 +74,7 @@ public class FlatCrudServlet extends HttpServlet {
 					+ "\n"
 					+ "      <ul style=\"line-height: 1.8; margin-left: 0; padding-left: 15px\">\n"
 					+ "        <li><a href=\"customers\">Customers</a></li>\n"
-					+ "        <li><a href=\"fadd\">Add flat</a></li>\n"
+					+ "        <li><a href=\"fadd?cid=" + customer_id + "\">Add flat</a></li>\n"
 					+ "      </ul>\n"
 					+ "    </div>\n"
 					+ "\n"
