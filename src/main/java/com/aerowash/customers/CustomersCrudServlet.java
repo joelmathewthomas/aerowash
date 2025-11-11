@@ -105,7 +105,7 @@ public class CustomersCrudServlet extends HttpServlet {
 								+ "            <td>" + lname + "</td>\n"
 								+ "            <td>" + phone + "</td>\n"
 								+ "            <td style=\"white-space: nowrap\">\n"
-								+ "              <a href=\"cedit?id=1001\">Flat</a> |\n"
+								+ "              <a href=\"flat?cid=" + cid +"\">Flat</a> |\n"
 								+ "              <a href=\"cedit?id=1001\">Vehicles</a> |\n"
 								+ "              <a href=\"" + editUrl +"\">Edit</a> |\n"
 								+ "              <a href=\"cdelete?id=1001\">Delete</a>\n"
