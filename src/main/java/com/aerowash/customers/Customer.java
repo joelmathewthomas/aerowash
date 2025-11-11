@@ -28,8 +28,8 @@ public class Customer {
 
 	// Return a new Customer object directly from request
 	public static Customer getFromForm(HttpServletRequest request) {
-		return new Customer(request.getParameter("fname"), request.getParameter("mname"), request.getParameter("lname"),
-				request.getParameter("phone"));
+		return new Customer(request.getParameter("customer_fname"), request.getParameter("customer_mname"), request.getParameter("customer_lname"),
+				request.getParameter("customer_phone"));
 	}
 
 	// Check patterns
@@ -58,7 +58,7 @@ public class Customer {
 
 		conn.setAutoCommit(false);
 
-		final String sql = "INSERT INTO aerowash.customers (customer_fname, customer_mname, customer_lname, customer_phone) VALUES (?, ?, ?, ?)";
+		final String sql = "INSERT INTO aerowash.customer (customer_fname, customer_mname, customer_lname, customer_phone) VALUES (?, ?, ?, ?)";
 
 		try (PreparedStatement pstUser = conn.prepareStatement(sql)) {
 			// Insert user

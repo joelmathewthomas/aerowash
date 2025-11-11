@@ -2,6 +2,9 @@ package com.aerowash.customers;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -31,7 +34,7 @@ public class CustomerAddServlet extends HttpServlet {
 			PrintWriter out = response.getWriter();
 
 			response.setContentType("text/html");
-			
+
 			out.println("<!DOCTYPE html>\n"
 					+ "<html>\n"
 					+ "  <head>\n"
@@ -53,7 +56,7 @@ public class CustomerAddServlet extends HttpServlet {
 					+ "    <h2>Add Customers</h2>\n"
 					+ "\n"
 					+ "    <form\n"
-					+ "      action=\"sadd\"\n"
+					+ "      action=\"cadd\"\n"
 					+ "      method=\"POST\"\n"
 					+ "      style=\"margin-top: 20px; line-height: 1.8\"\n"
 					+ "    >\n"
@@ -61,7 +64,7 @@ public class CustomerAddServlet extends HttpServlet {
 					+ "        <label>First Name</label><br />\n"
 					+ "        <input\n"
 					+ "          type=\"text\"\n"
-					+ "          name=\"staff_fname\"\n"
+					+ "          name=\"customer_fname\"\n"
 					+ "          required\n"
 					+ "          style=\"padding: 5px; width: 200px\"\n"
 					+ "        />\n"
@@ -71,7 +74,7 @@ public class CustomerAddServlet extends HttpServlet {
 					+ "        <label>Middle Name</label><br />\n"
 					+ "        <input\n"
 					+ "          type=\"text\"\n"
-					+ "          name=\"staff_mname\"\n"
+					+ "          name=\"customer_mname\"\n"
 					+ "          style=\"padding: 5px; width: 200px\"\n"
 					+ "        />\n"
 					+ "      </div>\n"
@@ -80,7 +83,7 @@ public class CustomerAddServlet extends HttpServlet {
 					+ "        <label>Last Name</label><br />\n"
 					+ "        <input\n"
 					+ "          type=\"text\"\n"
-					+ "          name=\"staff_lname\"\n"
+					+ "          name=\"customer_lname\"\n"
 					+ "          required\n"
 					+ "          style=\"padding: 5px; width: 200px\"\n"
 					+ "        />\n"
@@ -90,7 +93,7 @@ public class CustomerAddServlet extends HttpServlet {
 					+ "        <label>Phone</label><br />\n"
 					+ "        <input\n"
 					+ "          type=\"text\"\n"
-					+ "          name=\"staff_phone\"\n"
+					+ "          name=\"customer_phone\"\n"
 					+ "          required\n"
 					+ "          pattern=\"[0-9]{10}\"\n"
 					+ "          title=\"Phone must be 10 digits\"\n"
@@ -104,7 +107,7 @@ public class CustomerAddServlet extends HttpServlet {
 					+ "  </body>\n"
 					+ "</html>\n"
 					+ "");
-			
+
 			out.close();
 
 		} catch (Exception ex) {
@@ -116,7 +119,43 @@ public class CustomerAddServlet extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		doGet(request, response);
-	}
+		try {
+			Class.forName(getServletContext().getInitParameter("Driver"));
+		} catch (ClassNotFoundException ex) {
+			ex.printStackTrace();
+		}
 
+		try (Connection conn = DriverManager.getConnection(getServletContext().getInitParameter("DbUrl"),
+				getServletContext().getInitParameter("DbUser"), getServletContext().getInitParameter("DbPassword"))) {
+			// Session Tracking
+			HttpSession session = request.getSession(false);
+
+			if (!Auth.checkSession(response, session, "staff", 3, 2)) {
+				return;
+			}
+
+			Customer customer = Customer.getFromForm(request);
+
+			// Validate form input
+			String error = customer.validateForm();
+
+			if (error != null) {
+				// send error code with parameter so UI can show the exact message
+				response.sendRedirect("status?c=4&r=5&e=" + error);
+				return;
+			}
+
+			error = customer.addRecord(conn);
+			// Add record to table
+			if (error == null) {
+				response.sendRedirect("customers");
+			} else {
+				response.sendRedirect("status?c=4&r=5&e=" + error);
+			}
+
+		} catch (SQLException ex) {
+			response.sendRedirect("status");
+			ex.printStackTrace();
+		}
+	}
 }
