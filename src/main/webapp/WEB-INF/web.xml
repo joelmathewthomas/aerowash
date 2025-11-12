@@ -147,7 +147,7 @@
 		<servlet-name>VehicleCrudServlet</servlet-name>
 		<url-pattern>/vehicle</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet>
 		<servlet-name>VehicleAddServlet</servlet-name>
 		<servlet-class>com.aerowash.customers.vehicle.VehicleAddServlet</servlet-class>
@@ -156,6 +156,16 @@
 	<servlet-mapping>
 		<servlet-name>VehicleAddServlet</servlet-name>
 		<url-pattern>/vadd</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>VehicleEditServlet</servlet-name>
+		<servlet-class>com.aerowash.customers.vehicle.VehicleEditServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>VehicleEditServlet</servlet-name>
+		<url-pattern>/vedit</url-pattern>
 	</servlet-mapping>
 
 	<servlet>
