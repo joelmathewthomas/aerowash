@@ -87,7 +87,7 @@ public class Flat {
 
 		conn.setAutoCommit(false);
 
-		final String sql = "UPDATE flat SET flat_name = ?, flat_location = ?, WHERE flat_id = ?";
+		final String sql = "UPDATE flat SET flat_name = ?, flat_location = ? WHERE flat_id = ?";
 
 		try (PreparedStatement pst = conn.prepareStatement(sql)) {
 			// Update customer

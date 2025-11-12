@@ -73,13 +73,24 @@ public class FlatEditServlet extends HttpServlet {
 					+ "      </ul>\n"
 					+ "    </div>\n"
 					+ "\n"
-					+ "    <h2>Add a flat</h2>\n"
+					+ "    <h2>Edit flat details</h2>\n"
 					+ "\n"
 					+ "    <form\n"
-					+ "      action=\"fadd\"\n"
+					+ "      action=\"fedit\"\n"
 					+ "      method=\"POST\"\n"
 					+ "      style=\"margin-top: 20px; line-height: 1.8\"\n"
 					+ "    >\n"
+					+ "      <div style=\"margin-top: 15px\">\n"
+					+ "        <label>Flat ID</label><br />\n"
+					+ "        <input\n"
+					+ "          type=\"text\"\n"
+					+ "          name=\"flat_id\"\n"
+					+ "          readonly\n"
+					+ "          value=\"" + flat_id + "\"\n"
+					+ "          style=\"padding: 5px; width: 200px\"\n"
+					+ "        />\n"
+					+ "      </div>\n"
+					+ "\n"
 					+ "      <div style=\"margin-top: 15px\">\n"
 					+ "        <label>Customer ID</label><br />\n"
 					+ "        <input\n"
@@ -113,7 +124,7 @@ public class FlatEditServlet extends HttpServlet {
 					+ "        />\n"
 					+ "      </div>\n"
 					+ "      <button type=\"submit\" style=\"margin-top: 20px; padding: 8px 20px\">\n"
-					+ "        Add\n"
+					+ "        Save\n"
 					+ "      </button>\n"
 					+ "    </form>\n"
 					+ "  </body>\n"
@@ -143,7 +154,7 @@ public class FlatEditServlet extends HttpServlet {
 
 			int flat_id;
 			try {
-				flat_id = (request.getParameter("fid") == null) ? 0 : Integer.parseInt(request.getParameter("fid"));
+				flat_id = (request.getParameter("flat_id") == null) ? 0 : Integer.parseInt(request.getParameter("flat_id"));
 			} catch (NumberFormatException ex) {
 				flat_id = 0;
 				ex.printStackTrace();
