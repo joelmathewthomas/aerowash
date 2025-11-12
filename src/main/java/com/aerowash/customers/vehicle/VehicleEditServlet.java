@@ -15,10 +15,10 @@ import javax.servlet.http.HttpSession;
 
 import com.aerowash.auth.Auth;
 
-public class VehicleAddServlet extends HttpServlet {
+public class VehicleEditServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
-	public VehicleAddServlet() {
+	public VehicleEditServlet() {
 		super();
 	}
 
@@ -31,16 +31,18 @@ public class VehicleAddServlet extends HttpServlet {
 		}
 
 		try (Connection conn = DriverManager.getConnection(getServletContext().getInitParameter("DbUrl"),
-				getServletContext().getInitParameter("DbUser"), getServletContext().getInitParameter("DbPassword"))) { 
-
+				getServletContext().getInitParameter("DbUser"), getServletContext().getInitParameter("DbPassword"))) {
 			// Session Tracking
 			HttpSession session = request.getSession(false);
 			Map<Integer, String> flats;
 
+			int vehicle_id;
 			int customer_id;
 			try {
+				vehicle_id = (request.getParameter("vid") == null) ? 0 : Integer.parseInt(request.getParameter("vid"));
 				customer_id = (request.getParameter("cid") == null) ? 0 : Integer.parseInt(request.getParameter("cid"));
 			} catch (NumberFormatException ex) {
+				vehicle_id = 0;
 				customer_id = 0;
 				ex.printStackTrace();
 			}
@@ -49,11 +51,14 @@ public class VehicleAddServlet extends HttpServlet {
 				return;
 			}
 
-			if (customer_id == 0) {
+			if (vehicle_id == 0) {
+				response.sendRedirect("status?c=4&r=5&e=invalid_vehicle_id");
+				return;
+			} else if (customer_id == 0) {
 				response.sendRedirect("status?c=4&r=5&e=invalid_customer_id");
 				return;
 			}
-			
+
 			flats = Vehicle.getFlats(conn, customer_id);
 			if (flats == null) {
 				response.sendRedirect("status?e=failed_to_fetch_flat_details");
@@ -61,11 +66,11 @@ public class VehicleAddServlet extends HttpServlet {
 			} else if (flats.isEmpty()) {
 				response.sendRedirect("status?e=no_flats_available");
 			}
-			
-			
+
 			PrintWriter out = response.getWriter();
+
 			response.setContentType("text/html");
-			
+
 			out.println("<!DOCTYPE html>\n"
 					+ "<html>\n"
 					+ "  <head>\n"
@@ -80,17 +85,30 @@ public class VehicleAddServlet extends HttpServlet {
 					+ "      <h3>Menu</h3>\n"
 					+ "\n"
 					+ "      <ul style=\"line-height: 1.8; margin-left: 0; padding-left: 15px\">\n"
-					+ "        <li><a href=\"vehicle?cid=" + customer_id + "\">Vehicle</a></li>\n"
+					+ "        <li><a href=\"vehicle?vid=" + vehicle_id + "&cid=" + customer_id + "\">Vehicle</a></li>\n"
 					+ "      </ul>\n"
 					+ "    </div>\n"
 					+ "\n"
-					+ "    <h2>Add Vehicle Details</h2>\n"
+					+ "    <h2>Edit Vehicle Details</h2>\n"
 					+ "\n"
 					+ "    <form\n"
-					+ "      action=\"vadd\"\n"
+					+ "      action=\"vedit\"\n"
 					+ "      method=\"POST\"\n"
 					+ "      style=\"margin-top: 20px; line-height: 1.8\"\n"
 					+ "    >\n"
+					+ "      <div style=\"margin-top: 15px\">\n"
+					+ "        <label>Vehicle ID</label><br />\n"
+					+ "        <input\n"
+					+ "          type=\"text\"\n"
+					+ "          name=\"vehicle_id\"\n"
+					+ "          required\n"
+					+ "          readonly\n"
+					+ "          value=\"" + vehicle_id + "\"\n"
+					+ "          style=\"padding: 5px; width: 200px\"\n"
+					+ "        />\n"
+					+ "      </div>\n"
+					+ "\n"
+
 					+ "      <div style=\"margin-top: 15px\">\n"
 					+ "        <label>Customer ID</label><br />\n"
 					+ "        <input\n"
@@ -108,6 +126,7 @@ public class VehicleAddServlet extends HttpServlet {
 					+ "        <input\n"
 					+ "          type=\"text\"\n"
 					+ "          name=\"vehicle_name\"\n"
+					+ "          value=\"" + request.getParameter("vehicle_name") + "\"\n"
 					+ "          required\n"
 					+ "          style=\"padding: 5px; width: 200px\"\n"
 					+ "        />\n"
@@ -118,6 +137,7 @@ public class VehicleAddServlet extends HttpServlet {
 					+ "        <input\n"
 					+ "          type=\"text\"\n"
 					+ "          name=\"vehicle_license_number\"\n"
+					+ "          value=\"" + request.getParameter("vehicle_license_number") + "\"\n"
 					+ "          style=\"padding: 5px; width: 200px\"\n"
 					+ "        />\n"
 					+ "      </div>\n"
@@ -126,21 +146,23 @@ public class VehicleAddServlet extends HttpServlet {
 					+ "        <label>Flat</label><br />\n"
 					+ "        <select name=\"flat_id\" style=\"padding: 5px; width: 200px\" required>\n"
 					+ "          <option value=\"\" disabled selected>Select a Flat</option>\n");
-			
+
 					for (Map.Entry<Integer, String> flat : flats.entrySet()) {
 						out.println("          <option value=\"" + flat.getKey() + "\">" + flat.getValue() + "</option>\n");
 					}
-			
+
 					out.println("\n"
 					+ "        </select>\n"
 					+ "      </div>\n"
 					+ "      <button type=\"submit\" style=\"margin-top: 20px; padding: 8px 20px\">\n"
-					+ "        Add\n"
+					+ "        Save\n"
 					+ "      </button>\n"
 					+ "    </form>\n"
 					+ "  </body>\n"
 					+ "</html>\n"
 					+ "");
+			
+			out.close();
 
 		} catch (Exception ex) {
 			response.sendRedirect("status");
@@ -161,16 +183,29 @@ public class VehicleAddServlet extends HttpServlet {
 			// Session Tracking
 			HttpSession session = request.getSession(false);
 
+			int vehicle_id;
+			try {
+				vehicle_id = (request.getParameter("vehicle_id") == null) ? 0 : Integer.parseInt(request.getParameter("vehicle_id"));
+			} catch (NumberFormatException ex) {
+				vehicle_id = 0;
+				ex.printStackTrace();
+			}
+
 			if (!Auth.checkSession(response, session, "staff", 3, 2)) {
+				return;
+			}
+
+			if (vehicle_id == 0) {
+				response.sendRedirect("status?c=4&r=5&e=invalid_vehicle_id");
 				return;
 			}
 
 			Vehicle vehicle = Vehicle.getFromForm(request);
 			if (vehicle == null) {
-				response.sendRedirect("status?c=4&r=6&e=invalid_customer_id_or_flat_not_selected");
+				response.sendRedirect("status?c=4&r=5&e=invalid_customer_id_or_flat_not_selected");
 				return;
 			}
-
+			
 			// Validate form input
 			String error = vehicle.validateForm();
 
@@ -180,7 +215,7 @@ public class VehicleAddServlet extends HttpServlet {
 				return;
 			}
 
-			error = vehicle.addRecord(conn);
+			error = vehicle.updateRecord(conn, vehicle_id);
 			// Add record to table
 			if (error == null) {
 				response.sendRedirect("vehicle?cid=" + vehicle.getCustomer_id());
@@ -191,7 +226,7 @@ public class VehicleAddServlet extends HttpServlet {
 		} catch (SQLException ex) {
 			response.sendRedirect("status");
 			ex.printStackTrace();
-		}	
+		}
 	}
 
 }

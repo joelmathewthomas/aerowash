@@ -116,7 +116,7 @@ public class VehicleCrudServlet extends HttpServlet {
 						+ "            <td>" + vehicle_license_number + "</td>\n"
 						+ "            <td>" + vehicle_added_date + "</td>\n"
 						+ "            <td style=\"white-space: nowrap\">\n"
-						+ "              <a href=\"vedit\">Edit</a>\n"
+						+ "              <a href=\"vedit?vid=" + vehicle_id + "&cid=" + customer_id + "&vehicle_name=" + vehicle_name + "&vehicle_license_number=" + vehicle_license_number + "\">Edit</a>\n"
 						+ "              |\n"
 						+ "              <a href=\"vdelete\">Delete</a>\n"
 						+ "            </td>\n"

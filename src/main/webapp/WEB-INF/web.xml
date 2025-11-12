@@ -158,6 +158,16 @@
 		<url-pattern>/vadd</url-pattern>
 	</servlet-mapping>
 
+	<servlet>
+		<servlet-name>VehicleEditServlet</servlet-name>
+		<servlet-class>com.aerowash.customers.vehicle.VehicleEditServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>VehicleEditServlet</servlet-name>
+		<url-pattern>/vedit</url-pattern>
+	</servlet-mapping>
+
 	<context-param>
 		<param-name>Driver</param-name>
 		<param-value>com.mysql.cj.jdbc.Driver</param-value>

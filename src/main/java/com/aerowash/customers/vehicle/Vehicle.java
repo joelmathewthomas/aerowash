@@ -110,6 +110,39 @@ public class Vehicle {
 		}
 	}
 
+	public String updateRecord(Connection conn, int vehicle_id) throws SQLException, IOException {
+
+		conn.setAutoCommit(false);
+
+		final String sql = "UPDATE vehicle SET vehicle_name = ?, vehicle_license_number = ?, flat_id = ? WHERE vehicle_id = ?";
+
+		try (PreparedStatement pst = conn.prepareStatement(sql)) {
+			// Update customer
+			pst.setString(1, vehicle_name);
+			pst.setString(2, vehicle_license_number);
+			pst.setInt(3, flat_id);
+			pst.setInt(4, vehicle_id);
+
+			if (pst.executeUpdate() != 1) {
+				conn.rollback();
+				return "Failed to update vehicle details";
+			}
+
+			// Update succeeded
+			conn.commit();
+		} catch (SQLIntegrityConstraintViolationException ex) {
+			conn.rollback();
+			ex.printStackTrace();
+			return Vehicle.getDuplicateKey(ex.getMessage());
+		} catch (SQLException ex) {
+			conn.rollback();
+			ex.printStackTrace();
+			return "Failed to update details";
+		}
+
+		return null;
+	}
+
 	public static Map<Integer, String> getFlats(Connection conn, int customer_id) {
 		String sql = "SELECT flat_id, flat_name FROM flat WHERE customer_id = ?";
 		Map<Integer, String> flats = new HashMap<Integer, String>();
