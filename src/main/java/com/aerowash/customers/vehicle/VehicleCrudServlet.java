@@ -1,8 +1,9 @@
-package com.aerowash.customers;
+package com.aerowash.customers.vehicle;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,10 +17,10 @@ import javax.servlet.http.HttpSession;
 
 import com.aerowash.auth.Auth;
 
-public class CustomersCrudServlet extends HttpServlet {
+public class VehicleCrudServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
-	public CustomersCrudServlet() {
+	public VehicleCrudServlet() {
 		super();
 	}
 
@@ -36,11 +37,26 @@ public class CustomersCrudServlet extends HttpServlet {
 			// Session Tracking
 			HttpSession session = request.getSession(false);
 
+			int customer_id;
+			try {
+				customer_id = (request.getParameter("cid") == null) ? 0 : Integer.parseInt(request.getParameter("cid"));
+			} catch (NumberFormatException ex) {
+				customer_id = 0;
+				ex.printStackTrace();
+			}
+
 			if (!Auth.checkSession(response, session, "staff", 3, 2)) {
 				return;
 			}
 
-			PreparedStatement pst = conn.prepareStatement("SELECT * FROM customer");
+			if (customer_id == 0) {
+				response.sendRedirect("status?c=4&r=5&e=invalid_customer_id");
+				return;
+			}
+
+			PreparedStatement pst = conn.prepareStatement(
+					"SELECT v.vehicle_id, v.flat_id, v.vehicle_name, v.vehicle_license_number, v.vehicle_added_date, f.flat_name FROM vehicle v JOIN flat f ON v.flat_id = f.flat_id WHERE v.customer_id = ?");
+			pst.setInt(1, customer_id);
 			ResultSet rs = pst.executeQuery();
 
 			PrintWriter out = response.getWriter();
@@ -50,7 +66,7 @@ public class CustomersCrudServlet extends HttpServlet {
 					+ "<html>\n"
 					+ "  <head>\n"
 					+ "    <meta charset=\"UTF-8\" />\n"
-					+ "    <title>AeroWash</title>\n"
+					+ "    <title>Vehicle CRUD</title>\n"
 					+ "  </head>\n"
 					+ "  <body style=\"font-family: Arial, sans-serif; margin: 20px\">\n"
 					+ "    <h1 style=\"text-align: center; margin-bottom: 5px\">AeroWash</h1>\n"
@@ -58,10 +74,9 @@ public class CustomersCrudServlet extends HttpServlet {
 					+ "\n"
 					+ "    <div style=\"margin-top: 20px\">\n"
 					+ "      <h3>Menu</h3>\n"
-					+ "\n"
 					+ "      <ul style=\"line-height: 1.8; margin-left: 0; padding-left: 15px\">\n"
-					+ "        <li><a href=\"staff\">Home</a></li>\n"
-					+ "        <li><a href=\"cadd\">Add customer</a></li>\n"
+					+ "        <li><a href=\"customers\">Customers</a></li>\n"
+					+ "        <li><a href=\"cadd\">Add Vehicle</a></li>\n"
 					+ "      </ul>\n"
 					+ "    </div>\n"
 					+ "\n"
@@ -76,51 +91,46 @@ public class CustomersCrudServlet extends HttpServlet {
 					+ "          style=\"background-color: #f2f2f2; font-weight: bold; text-align: left\"\n"
 					+ "        >\n"
 					+ "          <tr>\n"
-					+ "            <th>Customer ID</th>\n"
-					+ "            <th>First Name</th>\n"
-					+ "            <th>Middle Name</th>\n"
-					+ "            <th>Last Name</th>\n"
-					+ "            <th>Phone</th>\n"
+					+ "            <th>Vehicle ID</th>\n"
+					+ "            <th>Flat Name</th>\n"
+					+ "            <th>Vehicle Name</th>\n"
+					+ "            <th>License Number</th>\n"
+					+ "            <th>Vehicle Added Date</th>\n"
 					+ "            <th>Action</th>\n"
 					+ "          </tr>\n"
 					+ "        </thead>\n"
-					+ "\n"
-					+ "        <tbody>\n");
+					+ "        <tbody>");
 
-					while (rs.next()) {
-						
-						int cid = rs.getInt(1);
-						String fname = rs.getString(2);
-						String mname = (rs.getString(3) == null) ? "" : rs.getString(3);
-						String lname = rs.getString(4);
-						String phone = rs.getString(5);
-					
-						String editUrl = "cedit?cid=" + cid + "&fname=" + fname + "&mname=" + mname + "&lname=" + lname + "&phone=" + phone;
+			while (rs.next()) {
 
-						out.println("\n"
-								+ "          <tr>\n"
-								+ "            <td>" + cid + "</td>\n"
-								+ "            <td>" + fname + "</td>\n"
-								+ "            <td>" + mname + "</td>\n"
-								+ "            <td>" + lname + "</td>\n"
-								+ "            <td>" + phone + "</td>\n"
-								+ "            <td style=\"white-space: nowrap\">\n"
-								+ "              <a href=\"flat?cid=" + cid +"\">Flat</a> |\n"
-								+ "              <a href=\"vehicle?cid=" + cid + "\">Vehicles</a> |\n"
-								+ "              <a href=\"" + editUrl +"\">Edit</a> |\n"
-								+ "              <a href=\"cdelete?id=1001\">Delete</a>\n"
-								+ "            </td>\n"
-								+ "          </tr>\n");
-					}
-					
-					out.println("\n"
-					+ "        </tbody>\n"
+				int vehicle_id = rs.getInt(1);
+				int flat_id = rs.getInt(2);
+				String vehicle_name = rs.getString(3);
+				String vehicle_license_number = rs.getString(4);
+				Date vehicle_added_date = rs.getDate(5);
+				String flat_name = rs.getString(6);
+
+				out.println("          <tr>\n"
+						+ "            <td>" + vehicle_id + "</td>\n"
+						+ "            <td>" + flat_name + "</td>\n"
+						+ "            <td>" + vehicle_name + "</td>\n"
+						+ "            <td>" + vehicle_license_number + "</td>\n"
+						+ "            <td>" + vehicle_added_date + "</td>\n"
+						+ "            <td style=\"white-space: nowrap\">\n"
+						+ "              <a href=\"vedit\">Edit</a>\n"
+						+ "              |\n"
+						+ "              <a href=\"vdelete\">Delete</a>\n"
+						+ "            </td>\n"
+						+ "          </tr>");
+
+			}
+
+			out.println("        </tbody>\n"
 					+ "      </table>\n"
 					+ "    </div>\n"
 					+ "  </body>\n"
 					+ "</html>\n"
 					+ "");
-
 			out.close();
 
 		} catch (SQLException ex) {
@@ -131,7 +141,6 @@ public class CustomersCrudServlet extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		doGet(request, response);
 	}
 
 }

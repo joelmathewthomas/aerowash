@@ -138,6 +138,16 @@
 		<url-pattern>/fedit</url-pattern>
 	</servlet-mapping>
 
+	<servlet>
+		<servlet-name>VehicleCrudServlet</servlet-name>
+		<servlet-class>com.aerowash.customers.vehicle.VehicleCrudServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>VehicleCrudServlet</servlet-name>
+		<url-pattern>/vehicle</url-pattern>
+	</servlet-mapping>
+
 	<context-param>
 		<param-name>Driver</param-name>
 		<param-value>com.mysql.cj.jdbc.Driver</param-value>
