@@ -147,6 +147,16 @@
 		<servlet-name>VehicleCrudServlet</servlet-name>
 		<url-pattern>/vehicle</url-pattern>
 	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>VehicleAddServlet</servlet-name>
+		<servlet-class>com.aerowash.customers.vehicle.VehicleAddServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>VehicleAddServlet</servlet-name>
+		<url-pattern>/vadd</url-pattern>
+	</servlet-mapping>
 
 	<context-param>
 		<param-name>Driver</param-name>

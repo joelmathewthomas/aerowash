@@ -76,7 +76,7 @@ public class VehicleCrudServlet extends HttpServlet {
 					+ "      <h3>Menu</h3>\n"
 					+ "      <ul style=\"line-height: 1.8; margin-left: 0; padding-left: 15px\">\n"
 					+ "        <li><a href=\"customers\">Customers</a></li>\n"
-					+ "        <li><a href=\"cadd\">Add Vehicle</a></li>\n"
+					+ "        <li><a href=\"vadd?cid=" + customer_id + "\">Add Vehicle</a></li>\n"
 					+ "      </ul>\n"
 					+ "    </div>\n"
 					+ "\n"
