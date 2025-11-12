@@ -2,6 +2,9 @@ package com.aerowash.customers.flat;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -70,6 +73,17 @@ public class FlatAddServlet extends HttpServlet {
 					+ "      style=\"margin-top: 20px; line-height: 1.8\"\n"
 					+ "    >\n"
 					+ "      <div style=\"margin-top: 15px\">\n"
+					+ "        <label>Customer ID</label><br />\n"
+					+ "        <input\n"
+					+ "          type=\"text\"\n"
+					+ "          name=\"customer_id\"\n"
+					+ "          readonly\n"
+					+ "          value=\"" + customer_id + "\"\n"
+					+ "          style=\"padding: 5px; width: 200px\"\n"
+					+ "        />\n"
+					+ "      </div>\n"
+					+ "\n"
+					+ "      <div style=\"margin-top: 15px\">\n"
 					+ "        <label>Flat Name</label><br />\n"
 					+ "        <input\n"
 					+ "          type=\"text\"\n"
@@ -83,7 +97,8 @@ public class FlatAddServlet extends HttpServlet {
 					+ "        <label>Flat Address</label><br />\n"
 					+ "        <input\n"
 					+ "          type=\"text\"\n"
-					+ "          name=\"flat_mname\"\n"
+					+ "          name=\"flat_address\"\n"
+					+ "          required\n"
 					+ "          style=\"padding: 5px; width: 200px\"\n"
 					+ "        />\n"
 					+ "      </div>\n"
@@ -105,7 +120,49 @@ public class FlatAddServlet extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		doGet(request, response);
+		try {
+			Class.forName(getServletContext().getInitParameter("Driver"));
+		} catch (ClassNotFoundException ex) {
+			ex.printStackTrace();
+		}
+
+		try (Connection conn = DriverManager.getConnection(getServletContext().getInitParameter("DbUrl"),
+				getServletContext().getInitParameter("DbUser"), getServletContext().getInitParameter("DbPassword"))) {
+			// Session Tracking
+			HttpSession session = request.getSession(false);
+
+			if (!Auth.checkSession(response, session, "staff", 3, 2)) {
+				return;
+			}
+
+			Flat flat = Flat.getFromForm(request);
+			if (flat == null) {
+				response.sendRedirect("status?c=4&r=6&e=invalid_customer_id");
+				return;
+			}
+			
+			// Validate form input
+			String error = flat.validateForm();
+
+			if (error != null) {
+				// send error code with parameter so UI can show the exact message
+				response.sendRedirect("status?c=4&r=6&e=" + error);
+				return;
+			}
+
+			error = flat.addRecord(conn);
+			// Add record to table
+			if (error == null) {
+				response.sendRedirect("flat?cid=" + flat.getCustomer_id());
+			} else {
+				response.sendRedirect("status?c=4&r=6&e=" + error);
+			}
+
+		} catch (SQLException ex) {
+			response.sendRedirect("status");
+			ex.printStackTrace();
+		}
 	}
 
-}
+	}
+
