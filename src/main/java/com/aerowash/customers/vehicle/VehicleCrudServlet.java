@@ -104,7 +104,6 @@ public class VehicleCrudServlet extends HttpServlet {
 			while (rs.next()) {
 
 				int vehicle_id = rs.getInt(1);
-				int flat_id = rs.getInt(2);
 				String vehicle_name = rs.getString(3);
 				String vehicle_license_number = rs.getString(4);
 				Date vehicle_added_date = rs.getDate(5);

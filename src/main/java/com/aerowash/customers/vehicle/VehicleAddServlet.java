@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.Map;
 
 import javax.servlet.ServletException;
@@ -85,18 +86,18 @@ public class VehicleAddServlet extends HttpServlet {
 					+ "    <h2>Add Vehicle Details</h2>\n"
 					+ "\n"
 					+ "    <form\n"
-					+ "      action=\"cedit\"\n"
+					+ "      action=\"vadd\"\n"
 					+ "      method=\"POST\"\n"
 					+ "      style=\"margin-top: 20px; line-height: 1.8\"\n"
 					+ "    >\n"
 					+ "      <div style=\"margin-top: 15px\">\n"
-					+ "        <label>Vehicle ID</label><br />\n"
+					+ "        <label>Customer ID</label><br />\n"
 					+ "        <input\n"
 					+ "          type=\"text\"\n"
-					+ "          name=\"vehicle_id\"\n"
+					+ "          name=\"customer_id\"\n"
 					+ "          required\n"
 					+ "          readonly\n"
-					+ "          value=\"2\"\n"
+					+ "          value=\"" + customer_id + "\"\n"
 					+ "          style=\"padding: 5px; width: 200px\"\n"
 					+ "        />\n"
 					+ "      </div>\n"
@@ -107,7 +108,6 @@ public class VehicleAddServlet extends HttpServlet {
 					+ "          type=\"text\"\n"
 					+ "          name=\"vehicle_name\"\n"
 					+ "          required\n"
-					+ "          value=\"Joel\"\n"
 					+ "          style=\"padding: 5px; width: 200px\"\n"
 					+ "        />\n"
 					+ "      </div>\n"
@@ -117,14 +117,13 @@ public class VehicleAddServlet extends HttpServlet {
 					+ "        <input\n"
 					+ "          type=\"text\"\n"
 					+ "          name=\"vehicle_license_number\"\n"
-					+ "          value=\"asdsada\"\n"
 					+ "          style=\"padding: 5px; width: 200px\"\n"
 					+ "        />\n"
 					+ "      </div>\n"
 					+ "\n"
 					+ "      <div style=\"margin-top: 15px\">\n"
 					+ "        <label>Flat</label><br />\n"
-					+ "        <select name=\"customer_lname\" style=\"padding: 5px; width: 200px\">\n"
+					+ "        <select name=\"flat_id\" style=\"padding: 5px; width: 200px\" required>\n"
 					+ "          <option value=\"\" disabled selected>Select a Flat</option>\n");
 			
 					for (Map.Entry<Integer, String> flat : flats.entrySet()) {
@@ -135,7 +134,7 @@ public class VehicleAddServlet extends HttpServlet {
 					+ "        </select>\n"
 					+ "      </div>\n"
 					+ "      <button type=\"submit\" style=\"margin-top: 20px; padding: 8px 20px\">\n"
-					+ "        Save\n"
+					+ "        Add\n"
 					+ "      </button>\n"
 					+ "    </form>\n"
 					+ "  </body>\n"
@@ -150,7 +149,48 @@ public class VehicleAddServlet extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		doGet(request, response);
+		try {
+			Class.forName(getServletContext().getInitParameter("Driver"));
+		} catch (ClassNotFoundException ex) {
+			ex.printStackTrace();
+		}
+
+		try (Connection conn = DriverManager.getConnection(getServletContext().getInitParameter("DbUrl"),
+				getServletContext().getInitParameter("DbUser"), getServletContext().getInitParameter("DbPassword"))) {
+			// Session Tracking
+			HttpSession session = request.getSession(false);
+
+			if (!Auth.checkSession(response, session, "staff", 3, 2)) {
+				return;
+			}
+
+			Vehicle vehicle = Vehicle.getFromForm(request);
+			if (vehicle == null) {
+				response.sendRedirect("status?c=4&r=6&e=invalid_customer_id_or_flat_not_selected");
+				return;
+			}
+
+			// Validate form input
+			String error = vehicle.validateForm();
+
+			if (error != null) {
+				// send error code with parameter so UI can show the exact message
+				response.sendRedirect("status?c=4&r=5&e=" + error);
+				return;
+			}
+
+			error = vehicle.addRecord(conn);
+			// Add record to table
+			if (error == null) {
+				response.sendRedirect("vehicle?cid=" + vehicle.getCustomer_id());
+			} else {
+				response.sendRedirect("status?c=4&r=5&e=" + error);
+			}
+
+		} catch (SQLException ex) {
+			response.sendRedirect("status");
+			ex.printStackTrace();
+		}	
 	}
 
 }
