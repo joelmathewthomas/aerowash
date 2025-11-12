@@ -143,6 +143,49 @@ public class Vehicle {
 		return null;
 	}
 
+	public static String deleteRecord(Connection conn, int vehicle_id, int customer_id) {
+
+		try (PreparedStatement pst = conn.prepareStatement("SELECT vehicle_id from vehicle WHERE customer_id = ?")) {
+			pst.setInt(1, customer_id );
+			ResultSet rs = pst.executeQuery();
+
+			if (!rs.next()) {
+				return "Customer does not exist";
+			}
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+			return "Failed to check for customer in database";
+		}
+
+		try {
+
+			conn.setAutoCommit(false);
+			
+			String Sql = "DELETE FROM vehicle WHERE vehicle_id = ?";
+
+			// Delete vehicle record
+			try (PreparedStatement pst = conn.prepareStatement(Sql)) {
+				pst.setInt(1, vehicle_id);
+				
+				if (pst.executeUpdate() != 1) {
+					conn.rollback();
+					return "Failed to delete vehicle records";
+				}
+							
+			} catch (SQLException ex) {
+				conn.rollback();
+				ex.printStackTrace();
+				return "Failed to delete records";
+			}
+
+			conn.commit();
+			return null;
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+			return "Failed to delete records: SQLException";
+		}
+	}
+
 	public static Map<Integer, String> getFlats(Connection conn, int customer_id) {
 		String sql = "SELECT flat_id, flat_name FROM flat WHERE customer_id = ?";
 		Map<Integer, String> flats = new HashMap<Integer, String>();

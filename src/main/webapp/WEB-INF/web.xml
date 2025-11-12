@@ -159,13 +159,13 @@
 	</servlet-mapping>
 
 	<servlet>
-		<servlet-name>VehicleEditServlet</servlet-name>
-		<servlet-class>com.aerowash.customers.vehicle.VehicleEditServlet</servlet-class>
+		<servlet-name>VehicleDeleteServlet</servlet-name>
+		<servlet-class>com.aerowash.customers.vehicle.VehicleDeleteServlet</servlet-class>
 	</servlet>
 
 	<servlet-mapping>
-		<servlet-name>VehicleEditServlet</servlet-name>
-		<url-pattern>/vedit</url-pattern>
+		<servlet-name>VehicleDeleteServlet</servlet-name>
+		<url-pattern>/vdelete</url-pattern>
 	</servlet-mapping>
 
 	<context-param>
