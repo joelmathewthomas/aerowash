@@ -1,8 +1,9 @@
-package com.aerowash.customers;
+package com.aerowash.customers.flat;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,10 +17,10 @@ import javax.servlet.http.HttpSession;
 
 import com.aerowash.auth.Auth;
 
-public class CustomersCrudServlet extends HttpServlet {
+public class FlatCrudServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
-	public CustomersCrudServlet() {
+	public FlatCrudServlet() {
 		super();
 	}
 
@@ -35,12 +36,24 @@ public class CustomersCrudServlet extends HttpServlet {
 				getServletContext().getInitParameter("DbUser"), getServletContext().getInitParameter("DbPassword"))) {
 			// Session Tracking
 			HttpSession session = request.getSession(false);
+			int customer_id;
+			try {
+				customer_id = (request.getParameter("cid") == null) ? 0 : Integer.parseInt(request.getParameter("cid"));
+			} catch (NumberFormatException ex) {
+				customer_id = 0;
+				ex.printStackTrace();
+			}
 
 			if (!Auth.checkSession(response, session, "staff", 3, 2)) {
 				return;
 			}
 
-			PreparedStatement pst = conn.prepareStatement("SELECT * FROM customer");
+			if (customer_id == 0) {
+				response.sendRedirect("status?c=4&r=5&e=invalid_customer_id");
+			}
+
+			PreparedStatement pst = conn.prepareStatement("SELECT * FROM flat WHERE customer_id = ?");
+			pst.setInt(1, customer_id);
 			ResultSet rs = pst.executeQuery();
 
 			PrintWriter out = response.getWriter();
@@ -60,8 +73,8 @@ public class CustomersCrudServlet extends HttpServlet {
 					+ "      <h3>Menu</h3>\n"
 					+ "\n"
 					+ "      <ul style=\"line-height: 1.8; margin-left: 0; padding-left: 15px\">\n"
-					+ "        <li><a href=\"staff\">Home</a></li>\n"
-					+ "        <li><a href=\"cadd\">Add customer</a></li>\n"
+					+ "        <li><a href=\"customers\">Customers</a></li>\n"
+					+ "        <li><a href=\"fadd?cid=" + customer_id + "\">Add flat</a></li>\n"
 					+ "      </ul>\n"
 					+ "    </div>\n"
 					+ "\n"
@@ -76,43 +89,40 @@ public class CustomersCrudServlet extends HttpServlet {
 					+ "          style=\"background-color: #f2f2f2; font-weight: bold; text-align: left\"\n"
 					+ "        >\n"
 					+ "          <tr>\n"
+					+ "            <th>Flat ID</th>\n"
 					+ "            <th>Customer ID</th>\n"
-					+ "            <th>First Name</th>\n"
-					+ "            <th>Middle Name</th>\n"
-					+ "            <th>Last Name</th>\n"
-					+ "            <th>Phone</th>\n"
+					+ "            <th>Flat Name</th>\n"
+					+ "            <th>Flat Address</th>\n"
+					+ "            <th>Added on</th>\n"
 					+ "            <th>Action</th>\n"
 					+ "          </tr>\n"
 					+ "        </thead>\n"
 					+ "\n"
 					+ "        <tbody>\n");
-
+			
 					while (rs.next()) {
+						int flat_id = rs.getInt(1);
+						String flat_name = rs.getString(3);
+						String flat_address = rs.getString(4);
+						Date flat_added_date = rs.getDate(5);
 						
-						int cid = rs.getInt(1);
-						String fname = rs.getString(2);
-						String mname = (rs.getString(3) == null) ? "" : rs.getString(3);
-						String lname = rs.getString(4);
-						String phone = rs.getString(5);
-					
-						String editUrl = "cedit?cid=" + cid + "&fname=" + fname + "&mname=" + mname + "&lname=" + lname + "&phone=" + phone;
-
+						String editUrl = "fedit?cid=" + customer_id + "&fid=" + flat_id + "&flat_name=" + flat_name + "&flat_address=" + flat_address;
+						
 						out.println("\n"
 								+ "          <tr>\n"
-								+ "            <td>" + cid + "</td>\n"
-								+ "            <td>" + fname + "</td>\n"
-								+ "            <td>" + mname + "</td>\n"
-								+ "            <td>" + lname + "</td>\n"
-								+ "            <td>" + phone + "</td>\n"
+								+ "            <td>" + flat_id + "</td>\n"
+								+ "            <td>" + customer_id + "</td>\n"
+								+ "            <td>" + flat_name + "</td>\n"
+								+ "            <td>" + flat_address + "</td>\n"
+								+ "            <td>" + flat_added_date + "</td>\n"
 								+ "            <td style=\"white-space: nowrap\">\n"
-								+ "              <a href=\"flat?cid=" + cid +"\">Flat</a> |\n"
-								+ "              <a href=\"cedit?id=1001\">Vehicles</a> |\n"
-								+ "              <a href=\"" + editUrl +"\">Edit</a> |\n"
-								+ "              <a href=\"cdelete?id=1001\">Delete</a>\n"
+								+ "              <a href=\"" + editUrl + "\">Edit</a>\n"
+								+ "              |\n"
+								+ "              <a href=\"fdelete\">Delete</a>\n"
 								+ "            </td>\n"
 								+ "          </tr>\n");
 					}
-					
+
 					out.println("\n"
 					+ "        </tbody>\n"
 					+ "      </table>\n"

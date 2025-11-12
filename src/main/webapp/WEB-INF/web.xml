@@ -108,6 +108,35 @@
 		<url-pattern>/cedit</url-pattern>
 	</servlet-mapping>
 
+	<servlet>
+		<servlet-name>FlatCrudServlet</servlet-name>
+		<servlet-class>com.aerowash.customers.flat.FlatCrudServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>FlatCrudServlet</servlet-name>
+		<url-pattern>/flat</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>FlatAddServlet</servlet-name>
+		<servlet-class>com.aerowash.customers.flat.FlatAddServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>FlatAddServlet</servlet-name>
+		<url-pattern>/fadd</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>FlatEditServlet</servlet-name>
+		<servlet-class>com.aerowash.customers.flat.FlatEditServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>FlatEditServlet</servlet-name>
+		<url-pattern>/fedit</url-pattern>
+	</servlet-mapping>
 
 	<context-param>
 		<param-name>Driver</param-name>
