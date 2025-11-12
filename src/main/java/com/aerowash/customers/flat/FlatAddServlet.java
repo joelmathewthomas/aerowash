@@ -138,7 +138,7 @@ public class FlatAddServlet extends HttpServlet {
 
 			Flat flat = Flat.getFromForm(request);
 			if (flat == null) {
-				response.sendRedirect("status?c=4&r=6&e=invalid_customer_id");
+				response.sendRedirect("status?c=4&r=5&e=invalid_customer_id");
 				return;
 			}
 			
@@ -147,7 +147,7 @@ public class FlatAddServlet extends HttpServlet {
 
 			if (error != null) {
 				// send error code with parameter so UI can show the exact message
-				response.sendRedirect("status?c=4&r=6&e=" + error);
+				response.sendRedirect("status?c=4&r=5&e=" + error);
 				return;
 			}
 
@@ -156,7 +156,7 @@ public class FlatAddServlet extends HttpServlet {
 			if (error == null) {
 				response.sendRedirect("flat?cid=" + flat.getCustomer_id());
 			} else {
-				response.sendRedirect("status?c=4&r=6&e=" + error);
+				response.sendRedirect("status?c=4&r=5&e=" + error);
 			}
 
 		} catch (SQLException ex) {
@@ -165,5 +165,5 @@ public class FlatAddServlet extends HttpServlet {
 		}
 	}
 
-	}
+}
 

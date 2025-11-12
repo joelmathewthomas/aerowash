@@ -17,7 +17,7 @@ public class StatusServlet extends HttpServlet {
 	private static final Map<Integer, String> MESSAGES = Map.of(1, "Invalid username or password.", 2,
 			"Please login to continue.", 3, "You are not authorized to view this page.", 4, "Invalid form data!");
 
-	private static final Map<Integer, String> ROUTES = Map.of(1, "/aerowash", 2, "admin", 3, "staff", 4, "scrud", 5, "customers", 6, "flat");
+	private static final Map<Integer, String> ROUTES = Map.of(1, "/aerowash", 2, "admin", 3, "staff", 4, "scrud", 5, "customers");
 
 	public StatusServlet() {
 		super();
@@ -41,7 +41,7 @@ public class StatusServlet extends HttpServlet {
 		if (request.getParameter("e") != null && request.getParameter("e").matches("\\D+")) {
 			error = request.getParameter("e");
 		}
-		
+
 		if (error != null) {
 			message = MESSAGES.getOrDefault(code, "Unkown error occured!") + ": " + error;
 		} else {
