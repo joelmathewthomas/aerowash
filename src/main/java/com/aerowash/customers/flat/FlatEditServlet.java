@@ -14,10 +14,10 @@ import javax.servlet.http.HttpSession;
 
 import com.aerowash.auth.Auth;
 
-public class FlatAddServlet extends HttpServlet {
+public class FlatEditServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
-	public FlatAddServlet() {
+	public FlatEditServlet() {
 		super();
 	}
 
@@ -28,10 +28,13 @@ public class FlatAddServlet extends HttpServlet {
 			HttpSession session = request.getSession(false);
 			
 			int customer_id;
+			int flat_id;
 			try {
 				customer_id = (request.getParameter("cid") == null) ? 0 : Integer.parseInt(request.getParameter("cid"));
+				flat_id = (request.getParameter("fid") == null) ? 0 : Integer.parseInt(request.getParameter("fid"));
 			} catch (NumberFormatException ex) {
 				customer_id = 0;
+				flat_id = 0;
 				ex.printStackTrace();
 			}
 
@@ -42,7 +45,11 @@ public class FlatAddServlet extends HttpServlet {
 			if (customer_id == 0) {
 				response.sendRedirect("status?c=4&r=5&e=invalid_customer_id");
 				return;
+			} else if (flat_id == 0) {
+				response.sendRedirect("status?c=4&r=5&e=invalid_flat_id");
+				return;
 			}
+
 
 			PrintWriter out = response.getWriter();
 
@@ -89,6 +96,7 @@ public class FlatAddServlet extends HttpServlet {
 					+ "        <input\n"
 					+ "          type=\"text\"\n"
 					+ "          name=\"flat_name\"\n"
+					+ "          value=\"" + request.getParameter("flat_name") + "\"\n"
 					+ "          required\n"
 					+ "          style=\"padding: 5px; width: 200px\"\n"
 					+ "        />\n"
@@ -99,6 +107,7 @@ public class FlatAddServlet extends HttpServlet {
 					+ "        <input\n"
 					+ "          type=\"text\"\n"
 					+ "          name=\"flat_address\"\n"
+					+ "          value=\"" + request.getParameter("flat_address") + "\"\n"
 					+ "          required\n"
 					+ "          style=\"padding: 5px; width: 200px\"\n"
 					+ "        />\n"
@@ -132,7 +141,20 @@ public class FlatAddServlet extends HttpServlet {
 			// Session Tracking
 			HttpSession session = request.getSession(false);
 
+			int flat_id;
+			try {
+				flat_id = (request.getParameter("fid") == null) ? 0 : Integer.parseInt(request.getParameter("fid"));
+			} catch (NumberFormatException ex) {
+				flat_id = 0;
+				ex.printStackTrace();
+			}
+
 			if (!Auth.checkSession(response, session, "staff", 3, 2)) {
+				return;
+			}
+
+			if (flat_id == 0) {
+				response.sendRedirect("status?c=4&r=5&e=invalid_flat_id");
 				return;
 			}
 
@@ -151,7 +173,7 @@ public class FlatAddServlet extends HttpServlet {
 				return;
 			}
 
-			error = flat.addRecord(conn);
+			error = flat.updateRecord(conn, flat_id);
 			// Add record to table
 			if (error == null) {
 				response.sendRedirect("flat?cid=" + flat.getCustomer_id());
@@ -165,5 +187,4 @@ public class FlatAddServlet extends HttpServlet {
 		}
 	}
 
-	}
-
+}

@@ -106,6 +106,8 @@ public class FlatCrudServlet extends HttpServlet {
 						String flat_address = rs.getString(4);
 						Date flat_added_date = rs.getDate(5);
 						
+						String editUrl = "fedit?cid=" + customer_id + "&fid=" + flat_id + "&flat_name=" + flat_name + "&flat_address=" + flat_address;
+						
 						out.println("\n"
 								+ "          <tr>\n"
 								+ "            <td>" + flat_id + "</td>\n"
@@ -114,9 +116,7 @@ public class FlatCrudServlet extends HttpServlet {
 								+ "            <td>" + flat_address + "</td>\n"
 								+ "            <td>" + flat_added_date + "</td>\n"
 								+ "            <td style=\"white-space: nowrap\">\n"
-								+ "              <a href=\"cedit?id=1001\">Flat</a> |\n"
-								+ "              <a href=\"cedit?id=1001\">Vehicles</a> |\n"
-								+ "              <a href=\"fedit\">Edit</a>\n"
+								+ "              <a href=\"" + editUrl + "\">Edit</a>\n"
 								+ "              |\n"
 								+ "              <a href=\"fdelete\">Delete</a>\n"
 								+ "            </td>\n"

@@ -53,7 +53,7 @@ public class Flat {
 	}
 
 	public String addRecord(Connection conn) throws SQLException, IOException {
-		
+
 		LocalDate currentDate = LocalDate.now();
 
 		conn.setAutoCommit(false);
@@ -81,6 +81,34 @@ public class Flat {
 			ex.printStackTrace();
 			return "Failed to add record";
 		}
+	}
+
+	public String updateRecord(Connection conn, int flat_id) throws SQLException, IOException {
+
+		conn.setAutoCommit(false);
+
+		final String sql = "UPDATE flat SET flat_name = ?, flat_location = ?, WHERE flat_id = ?";
+
+		try (PreparedStatement pst = conn.prepareStatement(sql)) {
+			// Update customer
+			pst.setString(1, flat_name);
+			pst.setString(2, flat_address);
+			pst.setInt(3, flat_id);
+
+			if (pst.executeUpdate() != 1) {
+				conn.rollback();
+				return "Failed to update flat details";
+			}
+
+			// Update succeeded
+			conn.commit();
+		} catch (SQLException ex) {
+			conn.rollback();
+			ex.printStackTrace();
+			return "Failed to update flat details";
+		}
+
+		return null;
 	}
 
 }
