@@ -127,7 +127,7 @@
 		<servlet-name>FlatAddServlet</servlet-name>
 		<url-pattern>/fadd</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet>
 		<servlet-name>FlatEditServlet</servlet-name>
 		<servlet-class>com.aerowash.customers.flat.FlatEditServlet</servlet-class>

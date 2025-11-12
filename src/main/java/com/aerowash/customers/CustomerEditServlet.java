@@ -64,7 +64,7 @@ public class CustomerEditServlet extends HttpServlet {
 					+ "      </ul>\n"
 					+ "    </div>\n"
 					+ "\n"
-					+ "    <h2>Edit Customers</h2>\n"
+					+ "    <h2>Edit Customer Details</h2>\n"
 					+ "\n"
 					+ "    <form\n"
 					+ "      action=\"cedit\"\n"
