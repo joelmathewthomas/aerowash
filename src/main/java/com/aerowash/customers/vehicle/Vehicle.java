@@ -146,7 +146,7 @@ public class Vehicle {
 	public static String deleteRecord(Connection conn, int vehicle_id, int customer_id) {
 
 		try (PreparedStatement pst = conn.prepareStatement("SELECT vehicle_id from vehicle WHERE customer_id = ?")) {
-			pst.setInt(1, customer_id );
+			pst.setInt(1, customer_id);
 			ResultSet rs = pst.executeQuery();
 
 			if (!rs.next()) {
@@ -160,18 +160,18 @@ public class Vehicle {
 		try {
 
 			conn.setAutoCommit(false);
-			
+
 			String Sql = "DELETE FROM vehicle WHERE vehicle_id = ?";
 
 			// Delete vehicle record
 			try (PreparedStatement pst = conn.prepareStatement(Sql)) {
 				pst.setInt(1, vehicle_id);
-				
+
 				if (pst.executeUpdate() != 1) {
 					conn.rollback();
 					return "Failed to delete vehicle records";
 				}
-							
+
 			} catch (SQLException ex) {
 				conn.rollback();
 				ex.printStackTrace();
@@ -204,5 +204,19 @@ public class Vehicle {
 			return null;
 		}
 		return flats;
+	}
+
+	public static ResultSet getVehicleList(Connection conn, int vehicle_id) {
+		String sql = "SELECT vehicle_id, vehicle_name FROM vehicle";
+
+		try {
+			PreparedStatement pst;
+			pst = conn.prepareStatement(sql);
+			return pst.executeQuery();
+
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+			return null;
+		}
 	}
 }

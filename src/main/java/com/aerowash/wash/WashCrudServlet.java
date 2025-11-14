@@ -46,6 +46,7 @@ public class WashCrudServlet extends HttpServlet {
 			ResultSet rs = Wash.getJobs(conn, request);
 			PrintWriter out = response.getWriter();
 
+			response.setContentType("text/html");
 			out.println("<!DOCTYPE html>\n"
 					+ "<html>\n"
 					+ "  <head>\n"
@@ -65,7 +66,7 @@ public class WashCrudServlet extends HttpServlet {
 						out.println("        <li><a href=\"admin\">Home</a></li>\n");
 					} else {
 						out.println("        <li><a href=\"staff\">Home</a></li>\n");
-						out.println("        <li><a href=\"cadd\">New Wash Job</a></li>\n");
+						out.println("        <li><a href=\"wadd\">New Wash Job</a></li>\n");
 					}
 
 					out.println("\n"
@@ -147,7 +148,6 @@ public class WashCrudServlet extends HttpServlet {
 					+ "</html>\n"
 					+ "");
 
-			response.setContentType("text/html");
 			out.close();
 
 		} catch (SQLException ex) {

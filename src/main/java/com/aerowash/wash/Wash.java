@@ -23,9 +23,8 @@ public class Wash {
 			return null;
 
 		String baseQuery = "SELECT w.wash_id, w.staff_id, w.vehicle_id, w.wash_date, "
-				+ "t.transaction_date, t.transaction_amount, "
-				+ "t.transaction_status, t.transaction_mode " + "FROM transactions t "
-				+ "JOIN wash w ON t.transaction_id = w.transaction_id "
+				+ "t.transaction_date, t.transaction_amount, " + "t.transaction_status, t.transaction_mode "
+				+ "FROM transactions t " + "JOIN wash w ON t.transaction_id = w.transaction_id "
 				+ "LEFT JOIN expense e ON w.wash_id = e.wash_id";
 
 		try {
@@ -46,6 +45,20 @@ public class Wash {
 			ex.printStackTrace();
 			return null;
 		}
+	}
+
+	public static int getParam(HttpServletRequest request, String arg) {
+		int param;
+
+		try {
+			param = Integer.parseInt(request.getParameter(arg));
+		} catch (NumberFormatException ex) {
+			ex.printStackTrace();
+			return 0;
+		}
+
+		return param;
+
 	}
 
 }

@@ -3,6 +3,7 @@ package com.aerowash.customers;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 
@@ -141,6 +142,20 @@ public class Customer {
 		} catch (SQLException ex) {
 			ex.printStackTrace();
 			return "Failed to delete records: SQLException";
+		}
+	}
+
+	public static ResultSet getCustomerList(Connection conn) {
+		String sql = "SELECT customer_id, customer_fname, customer_mname, customer_lname FROM customer";
+
+		try {
+			PreparedStatement pst;
+			pst = conn.prepareStatement(sql);
+			return pst.executeQuery();
+
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+			return null;
 		}
 	}
 }

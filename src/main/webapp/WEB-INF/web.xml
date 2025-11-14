@@ -208,6 +208,16 @@
 		<url-pattern>/wash</url-pattern>
 	</servlet-mapping>
 
+	<servlet>
+		<servlet-name>WashAddServlet</servlet-name>
+		<servlet-class>com.aerowash.wash.WashAddServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>WashAddServlet</servlet-name>
+		<url-pattern>/wadd</url-pattern>
+	</servlet-mapping>
+
 	<context-param>
 		<param-name>Driver</param-name>
 		<param-value>com.mysql.cj.jdbc.Driver</param-value>
