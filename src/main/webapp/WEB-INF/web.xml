@@ -198,6 +198,16 @@
 		<url-pattern>/vdelete</url-pattern>
 	</servlet-mapping>
 
+	<servlet>
+		<servlet-name>WashCrudServlet</servlet-name>
+		<servlet-class>com.aerowash.wash.WashCrudServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>WashCrudServlet</servlet-name>
+		<url-pattern>/wash</url-pattern>
+	</servlet-mapping>
+
 	<context-param>
 		<param-name>Driver</param-name>
 		<param-value>com.mysql.cj.jdbc.Driver</param-value>
