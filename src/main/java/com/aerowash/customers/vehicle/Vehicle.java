@@ -206,12 +206,13 @@ public class Vehicle {
 		return flats;
 	}
 
-	public static ResultSet getVehicleList(Connection conn, int vehicle_id) {
-		String sql = "SELECT vehicle_id, vehicle_name FROM vehicle";
+	public static ResultSet getVehicleList(Connection conn, int customer_id) {
+		String sql = "SELECT vehicle_id, vehicle_name FROM vehicle WHERE customer_id = ?";
 
 		try {
 			PreparedStatement pst;
 			pst = conn.prepareStatement(sql);
+			pst.setInt(1, customer_id);
 			return pst.executeQuery();
 
 		} catch (SQLException ex) {
