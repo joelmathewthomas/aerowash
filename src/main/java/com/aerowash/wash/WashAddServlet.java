@@ -179,9 +179,51 @@ public class WashAddServlet extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		System.out.println(request.getParameter("cid"));
-		System.out.println(request.getParameter("vid"));
-		System.out.println(request.getParameter("payment_mode"));
+		try {
+			Class.forName(getServletContext().getInitParameter("Driver"));
+		} catch (ClassNotFoundException ex) {
+			ex.printStackTrace();
+		}
+
+		try (Connection conn = DriverManager.getConnection(getServletContext().getInitParameter("DbUrl"),
+				getServletContext().getInitParameter("DbUser"), getServletContext().getInitParameter("DbPassword"))) {
+			// Session Tracking
+			HttpSession session = request.getSession(false);
+
+			// Check session
+			if (!Auth.checkSession(response, session, "staff", 3, 2)) {
+				return;
+			}
+			
+			int vehicle_id;
+			String transaction_mode = request.getParameter("payment_mode");
+			
+			if (transaction_mode == null) {
+				response.sendRedirect("status?e=transaction_mode_not_specified" );
+				return;
+			}
+			
+			try {
+				vehicle_id = Integer.parseInt(request.getParameter("vid"));
+				
+			} catch (NumberFormatException ex) {
+				ex.printStackTrace();
+				response.sendRedirect("status?e=invalid_vehicle_id" );
+				return;
+			}
+			
+			if (Wash.addNewJob(conn, session, vehicle_id, transaction_mode)) {
+				response.sendRedirect("wash");
+				return;
+			} else {
+				response.sendRedirect("status?e=failed_to_add_new_wash_job" );
+				return;
+			}
+
+		} catch (SQLException ex) {
+			response.sendRedirect("status");
+			ex.printStackTrace();
+		}	
 	}
 
 }
