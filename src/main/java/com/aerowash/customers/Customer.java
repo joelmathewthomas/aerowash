@@ -120,4 +120,27 @@ public class Customer {
 
 		return null;
 	}
+
+	public static String deleteRecord(Connection conn, int customer_id) {
+
+		if (customer_id == 0) {
+			return "Invalid flat_id";
+		}
+		try {
+			conn.setAutoCommit(false);
+			try (PreparedStatement pst = conn.prepareStatement("DELETE FROM customer WHERE customer_id = ?")) {
+				pst.setInt(1, customer_id);
+				if (pst.executeUpdate() != 1) {
+					conn.rollback();
+					return "Failed to delete customer record";
+				}
+			}
+
+			conn.commit();
+			return null;
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+			return "Failed to delete records: SQLException";
+		}
+	}
 }

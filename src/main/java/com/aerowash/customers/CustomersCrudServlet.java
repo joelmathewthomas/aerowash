@@ -108,7 +108,7 @@ public class CustomersCrudServlet extends HttpServlet {
 								+ "              <a href=\"flat?cid=" + cid +"\">Flat</a> |\n"
 								+ "              <a href=\"vehicle?cid=" + cid + "\">Vehicles</a> |\n"
 								+ "              <a href=\"" + editUrl +"\">Edit</a> |\n"
-								+ "              <a href=\"cdelete?id=1001\">Delete</a>\n"
+								+ "              <a href=\"cdelete?cid=" + cid + "\">Delete</a>\n"
 								+ "            </td>\n"
 								+ "          </tr>\n");
 					}

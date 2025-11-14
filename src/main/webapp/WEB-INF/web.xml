@@ -109,6 +109,16 @@
 	</servlet-mapping>
 
 	<servlet>
+		<servlet-name>CustomerDeleteServlet</servlet-name>
+		<servlet-class>com.aerowash.customers.CustomerDeleteServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>CustomerDeleteServlet</servlet-name>
+		<url-pattern>/cdelete</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
 		<servlet-name>FlatCrudServlet</servlet-name>
 		<servlet-class>com.aerowash.customers.flat.FlatCrudServlet</servlet-class>
 	</servlet>
