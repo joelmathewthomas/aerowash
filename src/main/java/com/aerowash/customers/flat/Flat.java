@@ -111,4 +111,27 @@ public class Flat {
 		return null;
 	}
 
+	public static String deleteRecord(Connection conn, int flat_id) {
+
+		if (flat_id == 0) {
+			return "Invalid flat_id";
+		}
+		try {
+			conn.setAutoCommit(false);
+			try (PreparedStatement pst = conn.prepareStatement("DELETE FROM flat WHERE flat_id = ?")) {
+				pst.setInt(1, flat_id);
+				if (pst.executeUpdate() != 1) {
+					conn.rollback();
+					return "Failed to delete flat record";
+				}
+			}
+
+			conn.commit();
+			return null;
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+			return "Failed to delete records: SQLException";
+		}
+	}
+
 }

@@ -116,7 +116,7 @@ public class FlatCrudServlet extends HttpServlet {
 								+ "            <td style=\"white-space: nowrap\">\n"
 								+ "              <a href=\"" + editUrl + "\">Edit</a>\n"
 								+ "              |\n"
-								+ "              <a href=\"fdelete\">Delete</a>\n"
+								+ "              <a href=\"fdelete?fid=" + flat_id + "&cid=" + customer_id + "\">Delete</a>\n"
 								+ "            </td>\n"
 								+ "          </tr>\n");
 					}
