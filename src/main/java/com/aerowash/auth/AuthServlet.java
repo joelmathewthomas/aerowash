@@ -49,13 +49,30 @@ public class AuthServlet extends HttpServlet {
 				session.setAttribute("username", rs.getString(2));
 				String role = (String) rs.getString(4);
 				session.setAttribute("role", role);
-				
+
 				if (role.equals("admin")) {
 					response.sendRedirect("admin");
+					return;
 				} else if (role.equals("staff")) {
-					response.sendRedirect("staff");
+					int user_id = rs.getInt(1);
+					pst = conn.prepareStatement("SELECT staff_status FROM staff WHERE user_id = ?");
+					pst.setInt(1, user_id);
+					rs = pst.executeQuery();
+					if (rs.next()) {
+						String staff_status = rs.getString(1);
+						if (staff_status.equals("inactive")) {
+							session.setAttribute("role", staff_status);
+							response.sendRedirect("staff");
+							return;
+						} else {
+							response.sendRedirect("staff");
+							return;
+
+						}
+					}
+
 				}
-				
+
 			} else {
 				response.sendRedirect("status?c=1&r=1");
 			}
