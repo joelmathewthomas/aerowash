@@ -35,10 +35,13 @@ public class CustomersCrudServlet extends HttpServlet {
 				getServletContext().getInitParameter("DbUser"), getServletContext().getInitParameter("DbPassword"))) {
 			// Session Tracking
 			HttpSession session = request.getSession(false);
+			String role;
 
-			if (!Auth.checkSession(response, session, "staff", 3, 2)) {
+			if (!Auth.checkSession(response, session, "all")) {
 				return;
 			}
+			
+			role = (String) session.getAttribute("role");
 
 			PreparedStatement pst = conn.prepareStatement("SELECT * FROM customer");
 			ResultSet rs = pst.executeQuery();
@@ -60,8 +63,13 @@ public class CustomersCrudServlet extends HttpServlet {
 					+ "      <h3>Menu</h3>\n"
 					+ "\n"
 					+ "      <ul style=\"line-height: 1.8; margin-left: 0; padding-left: 15px\">\n"
-					+ "        <li><a href=\"staff\">Home</a></li>\n"
-					+ "        <li><a href=\"cadd\">Add customer</a></li>\n"
+					+ "        <li><a href=\"staff\">Home</a></li>\n");
+			
+					if (role.equals("staff")) {
+						out.println("        <li><a href=\"cadd\">Add customer</a></li>\n");
+					}
+					
+					out.println(""
 					+ "      </ul>\n"
 					+ "    </div>\n"
 					+ "\n"
