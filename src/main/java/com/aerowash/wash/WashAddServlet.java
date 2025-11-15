@@ -63,7 +63,7 @@ public class WashAddServlet extends HttpServlet {
 					+ "      <h3>Menu</h3>\n"
 					+ "\n"
 					+ "      <ul style=\"line-height: 1.8; margin-left: 0; padding-left: 15px\">\n"
-					+ "        <li><a href=\"staff\">Home</a></li>\n"
+					+ "        <li><a href=\"wash\">Wash</a></li>\n"
 					+ "      </ul>\n"
 					+ "    </div>\n"
 					+ "\n"
