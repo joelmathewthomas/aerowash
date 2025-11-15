@@ -219,6 +219,16 @@
 	</servlet-mapping>
 
 	<servlet>
+		<servlet-name>WashDeleteServlet</servlet-name>
+		<servlet-class>com.aerowash.wash.WashDeleteServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>WashDeleteServlet</servlet-name>
+		<url-pattern>/wdelete</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
 		<servlet-name>ExpenseCrudServlet</servlet-name>
 		<servlet-class>com.aerowash.wash.expense.ExpenseCrudServlet</servlet-class>
 	</servlet>
@@ -247,7 +257,7 @@
 		<servlet-name>ExpenseDeleteServlet</servlet-name>
 		<url-pattern>/edelete</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet>
 		<servlet-name>TransactionMarkPaymentServlet</servlet-name>
 		<servlet-class>com.aerowash.wash.transactions.TransactionMarkPaymentServlet</servlet-class>

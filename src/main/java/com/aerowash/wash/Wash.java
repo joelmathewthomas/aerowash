@@ -144,6 +144,35 @@ public class Wash {
 		}
 	}
 
+	public static boolean deleteRecord(Connection conn, int transaction_id) {
+
+		try {
+			conn.setAutoCommit(false);
+
+			try (PreparedStatement pst = conn.prepareStatement("DELETE FROM transactions WHERE transaction_id = ?")) {
+				pst.setInt(1, transaction_id);
+
+				if (pst.executeUpdate() != 1) {
+					conn.rollback();
+					return false;
+				}
+
+				conn.commit();
+			}
+
+		} catch (SQLException ex) {
+			try {
+				conn.rollback();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			ex.printStackTrace();
+			return false;
+		}
+
+		return true;
+	}
+
 	public static int getParam(HttpServletRequest request, String arg) {
 		int param;
 

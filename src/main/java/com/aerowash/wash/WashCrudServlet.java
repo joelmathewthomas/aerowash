@@ -133,7 +133,7 @@ public class WashCrudServlet extends HttpServlet {
 								}
 								
 								if (role.equals("admin")) {
-									out.println("[" + "              <a href=\"washdelete?wid=1\">Delete</a> ]\n");
+									out.println("[" + "              <a href=\"wdelete?tid=" + rs.getInt(9) + "\">Delete</a> ]\n");
 								}
 								
 								out.println(""
