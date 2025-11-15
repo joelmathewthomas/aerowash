@@ -1,4 +1,4 @@
-package com.aerowash.wash;
+package com.aerowash.wash.expense;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -15,16 +15,15 @@ import javax.servlet.http.HttpSession;
 
 import com.aerowash.auth.Auth;
 
-public class WashCrudServlet extends HttpServlet {
+public class ExpenseCrudServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
-	public WashCrudServlet() {
+	public ExpenseCrudServlet() {
 		super();
 	}
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-
 		try {
 			Class.forName(getServletContext().getInitParameter("Driver"));
 		} catch (ClassNotFoundException ex) {
@@ -40,10 +39,19 @@ public class WashCrudServlet extends HttpServlet {
 			if (!Auth.checkSession(response, session, "all")) {
 				return;
 			}
-			
-			String role = (String) session.getAttribute("role");
 
-			ResultSet rs = Wash.getJobs(conn, request);
+			String role = (String) session.getAttribute("role");
+			
+			int wash_id = 0;
+			try {
+				wash_id = Integer.parseInt(request.getParameter("wid"));
+			} catch (NumberFormatException ex) {
+				response.sendRedirect("status?c=4&r=6&e=invalid_wash_id");
+				ex.printStackTrace();
+				return;
+			}
+
+			ResultSet rs = Expense.getItems(conn, wash_id);
 			PrintWriter out = response.getWriter();
 
 			response.setContentType("text/html");
@@ -60,16 +68,9 @@ public class WashCrudServlet extends HttpServlet {
 					+ "    <div style=\"margin-top: 20px\">\n"
 					+ "      <h3>Menu</h3>\n"
 					+ "\n"
-					+ "      <ul style=\"line-height: 1.8; margin-left: 0; padding-left: 15px\">\n");
-
-					if (role.equals("admin")) {
-						out.println("        <li><a href=\"admin\">Home</a></li>\n");
-					} else {
-						out.println("        <li><a href=\"staff\">Home</a></li>\n");
-						out.println("        <li><a href=\"wadd\">New Wash Job</a></li>\n");
-					}
-
-					out.println("\n"
+					+ "      <ul style=\"line-height: 1.8; margin-left: 0; padding-left: 15px\">"
+					+ "        <li><a href=\"wash\">Wash</a></li>\n"
+					+ "        <li><a href=\"expense\">New item</a></li>\n"
 					+ "      </ul>\n"
 					+ "    </div>\n"
 					+ "\n"
@@ -84,65 +85,35 @@ public class WashCrudServlet extends HttpServlet {
 					+ "          style=\"background-color: #f2f2f2; font-weight: bold; text-align: left\"\n"
 					+ "        >\n"
 					+ "          <tr>\n"
-					+ "            <th>Wash ID</th>\n");
-					
-					if (role.equals("admin")) {
-						out.println("            <th>Staff ID</th>\n");
-					}
-
-					out.println(""
-					+ "            <th>Vehicle ID</th>\n"
-					+ "            <th>Date</th>\n"
-					+ "\n"
-					+ "            <th>Transaction Date</th>\n"
+					+ "            <th>Expense ID</th>\n"
+					+ "            <th>Expense Item</th>\n"
 					+ "            <th>Amount</th>\n"
-					+ "            <th>Status</th>\n"
-					+ "            <th>Mode</th>\n"
+					+ "            <th>Expense Date</th>\n"
 					+ "            <th>Action</th>\n"
 					+ "          </tr>\n"
-					+ "        </thead>\n"
-					+ "\n");
-					
-					while(rs.next()) {
-						out.println(""
-								+ "        <tbody>\n"
-								+ "          <tr>\n"
-								+ "            <td>" + rs.getInt(1) + "</td>\n");
-
+					+ "        </thead>");
+			
+			while (rs.next()) {
+				out.println("        <tbody>\n"
+						+ "          <tr>\n"
+						+ "            <td>" + rs.getInt(1) + "</td>\n"
+						+ "            <td>" + rs.getString(3) + "</td>\n"
+						+ "            <td>" + rs.getFloat(4) + "</td>\n"
+						+ "            <td>" + rs.getDate(5) + "</td>\n"
+						+ "            <td style=\"white-space: nowrap\">\n"
+						+ "              [ <a href=\"washview?wid=1\">Edit</a> ] \n");
+						
 						if (role.equals("admin")) {
-							out.println("            <td>" + rs.getInt(2) + "</td>\n");
+							out.println("             [ <a href=\"washview?wid=1\">Delete</a> ]\n");
 						}
-								
+						
 						out.println(""
-								+ "            <td>" + rs.getInt(3) + "</td>\n"
-								+ "            <td>" + rs.getDate(4) + "</td>\n"
-								+ "\n"
-								+ "            <td>" + ((rs.getDate(5) == null) ? "" : rs.getDate(5)) + "</td>\n"
-								+ "            <td>" + rs.getFloat(6) + "</td>\n"
-								+ "            <td>" + rs.getString(7) + "</td>\n"
-								+ "            <td>" + rs.getString(8) + "</td>\n"
-								+ "\n"
-								+ "            <td style=\"white-space: nowrap\">\n"
-								+ "[" + "              <a href=\"expense?wid=" + rs.getInt(1) + "\">Expense</a> ] \n");
-							
-								if (rs.getString(7).equals("INCOMPLETE")) {
-									out.println("[" + "              <a href=\"washview?wid=1\">Mark as Paid</a> ]\n");
-								} else if (rs.getString(7).equals("COMPLETE") && role.equals("admin")) {
-									out.println("[" + "              <a href=\"washview?wid=1\">Mark as Unpaid</a> ]\n");
-								}
-								
-								if (role.equals("admin")) {
-									out.println("[" + "              <a href=\"washdelete?wid=1\">Delete</a> ]\n");
-								}
-								
-								out.println(""
-								+ "            </td>\n"
-								+ "          </tr>\n"
-								+ "        </tbody>\n");
-					}
-					
-					out.println(""
-					+ "      </table>\n"
+						+ "            </td>\n"
+						+ "          </tr>\n"
+						+ "        </tbody>");
+			}
+			
+			out.println("      </table>\n"
 					+ "    </div>\n"
 					+ "  </body>\n"
 					+ "</html>\n"
@@ -158,7 +129,7 @@ public class WashCrudServlet extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		response.sendRedirect("status?e=method_not_supported");
+		response.sendRedirect("status?e=method_not_allowed");
 	}
 
 }
