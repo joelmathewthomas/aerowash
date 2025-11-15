@@ -62,8 +62,13 @@ public class CustomersCrudServlet extends HttpServlet {
 					+ "    <div style=\"margin-top: 20px\">\n"
 					+ "      <h3>Menu</h3>\n"
 					+ "\n"
-					+ "      <ul style=\"line-height: 1.8; margin-left: 0; padding-left: 15px\">\n"
-					+ "        <li><a href=\"staff\">Home</a></li>\n");
+					+ "      <ul style=\"line-height: 1.8; margin-left: 0; padding-left: 15px\">\n");
+			
+					if (role.equals("admin")) {
+						out.println("        <li><a href=\"admin\">Home</a></li>\n");
+					} else {
+						out.println("        <li><a href=\"staff\">Home</a></li>\n");
+					}
 			
 					if (role.equals("staff")) {
 						out.println("        <li><a href=\"cadd\">Add customer</a></li>\n");
