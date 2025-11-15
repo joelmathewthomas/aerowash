@@ -256,6 +256,59 @@ public class Staff {
 		return null;
 	}
 
+	public static boolean hasJobs(Connection conn, String username) {
+		try {
+			try (PreparedStatement pst = conn.prepareStatement(
+					"SELECT s.staff_id FROM staff s JOIN users u ON s.user_id = u.user_id WHERE u.username = ?")) {
+				pst.setString(1, username);
+				ResultSet rs = pst.executeQuery();
+
+				if (!rs.next()) {
+					return false;
+				}
+
+				int staffId = rs.getInt(1);
+
+				try (PreparedStatement pstQuery = conn.prepareStatement("SELECT * FROM wash WHERE staff_id = ?")) {
+					pstQuery.setInt(1, staffId);
+					rs = pstQuery.executeQuery();
+					if (rs.next()) {
+						return true;
+					} else {
+						return false;
+					}
+				}
+			}
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+			return false;
+		}
+	}
+
+	public static boolean setInactive(Connection conn, String username) {
+
+		try {
+			conn.setAutoCommit(false);
+
+			try (PreparedStatement pst = conn.prepareStatement(
+					"UPDATE staff s JOIN users u ON s.user_id = u.user_id SET s.staff_status='inactive' WHERE u.username = ?")) {
+				pst.setString(1, username);
+
+				if (pst.executeUpdate() != 1) {
+					conn.rollback();
+					return false;
+				}
+
+				conn.commit();
+				conn.setAutoCommit(true);
+				return true;
+			}
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+			return false;
+		}
+	}
+
 	public static String deleteRecord(Connection conn, String username) {
 
 		if (username == null || username.trim().isEmpty()) {

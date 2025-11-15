@@ -37,12 +37,25 @@ public class StaffDeleteServlet extends HttpServlet {
 				return;
 			}
 
-			String error = Staff.deleteRecord(conn, request.getParameter("username"));
+			boolean hasJobs = Staff.hasJobs(conn, request.getParameter("username"));
 
-			if (error == null) {
-				response.sendRedirect("scrud");
+			if (hasJobs) {
+				if (Staff.setInactive(conn, request.getParameter("username"))) {
+					response.sendRedirect("scrud");
+					return;
+				} else {
+					response.sendRedirect("status");
+					return;
+				}
 			} else {
-				response.sendRedirect("status?c=4&r=3&e=" + error);
+
+				String error = Staff.deleteRecord(conn, request.getParameter("username"));
+
+				if (error == null) {
+					response.sendRedirect("scrud");
+				} else {
+					response.sendRedirect("status?c=4&r=3&e=" + error);
+				}
 			}
 
 		} catch (SQLException ex) {
