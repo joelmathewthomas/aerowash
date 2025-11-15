@@ -1,4 +1,4 @@
-package com.aerowash.salary;
+package com.aerowash.report;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -18,16 +18,16 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import com.aerowash.auth.Auth;
+import com.aerowash.salary.Salary;
 
-public class SalaryServlet extends HttpServlet {
+public class SalaryReportServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+       
+    public SalaryReportServlet() {
+        super();
+    }
 
-	public SalaryServlet() {
-		super();
-	}
-
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
 			Class.forName(getServletContext().getInitParameter("Driver"));
 		} catch (ClassNotFoundException ex) {
@@ -60,7 +60,7 @@ public class SalaryServlet extends HttpServlet {
 			
 			ResultSet rs = null;
 			if (validMonth && year > 2010 && year <= LocalDate.now().getYear()) {
-				rs = Salary.getUnpaidStaff(conn, month, year); 
+				rs = Salary.getReport(conn, month, year); 
 			}
 			
 			response.setContentType("text/html");
@@ -80,7 +80,7 @@ public class SalaryServlet extends HttpServlet {
 					+ "      <h3>Menu</h3>\n"
 					+ "\n"
 					+ "      <ul style=\"line-height: 1.8; margin-left: 0; padding-left: 15px\">\n"
-					+ "        <li><a href=\"admin\">Home</a></li>\n"
+					+ "        <li><a href=\"report\">Reports</a></li>\n"
 					+ "      </ul>\n"
 					+ "    </div>\n"
 					+ "\n"
@@ -88,7 +88,7 @@ public class SalaryServlet extends HttpServlet {
 			
 			if (!(validMonth && year > 2010 && year <= LocalDate.now().getYear())) {
 				out.println("    <form\n"
-						+ "      action=\"salary\"\n"
+						+ "      action=\"sreport\"\n"
 						+ "      method=\"GET\"\n"
 						+ "      style=\"margin-top: 20px; line-height: 1.8\"\n"
 						+ "    >\n"
@@ -127,62 +127,46 @@ public class SalaryServlet extends HttpServlet {
 						+ "      </button>\n"
 						+ "    </form>");
 			} else {
-				out.println("    <form\n"
-						+ "      action=\"salary\"\n"
-						+ "      method=\"POST\"\n"
-						+ "      style=\"margin-top: 20px; line-height: 1.8\"\n"
-						+ "    >\n"
-						+ "      <div style=\"margin-top: 15px\">\n"
-						+ "        <label>Month</label><br />\n"
-						+ "        <input\n"
-						+ "          type=\"text\"\n"
-						+ "          name=\"m\"\n"
-						+ "          value=\"" + month + "\"\n"
-						+ "          readonly\n"
-						+ "          style=\"padding: 5px; width: 200px\"\n"
-						+ "        />\n"
-						+ "      </div>\n"
-						+ "      <div style=\"margin-top: 15px\">\n"
-						+ "        <label>Year</label><br />\n"
-						+ "        <input\n"
-						+ "          type=\"text\"\n"
-						+ "          name=\"y\"\n"
-						+ "          value=\"" + year + "\"\n"
-						+ "          readonly\n"
-						+ "          style=\"padding: 5px; width: 200px\"\n"
-						+ "        />\n"
-						+ "      </div>\n"
-						+ "      <div style=\"margin-top: 15px\">\n"
-						+ "        <label>Select Staff</label><br />\n"
-						+ "        <select name=\"staff\" style=\"padding: 5px; width: 200px\" required>\n"
-						+ "          <option value=\"\" disabled selected>Select Staff</option>\n");
-						
-						if (rs !=null) {
-							while (rs.next()) {
-								out.println("          <option value=\"" + rs.getInt(1) + "\">" + rs.getString(1) + " " + rs.getString(2) + " " + ((rs.getString(3) == null) ? "" : rs.getString(3)) + " " + rs.getString(4) + "</option>\n");
-							}
+				out.println("<table\n"
+						+ "  border=\"1\"\n"
+						+ "  cellpadding=\"8\"\n"
+						+ "  cellspacing=\"0\"\n"
+						+ "  style=\"border-collapse: collapse; width: 100%\"\n"
+						+ ">\n"
+						+ "  <thead\n"
+						+ "    style=\"background-color: #f2f2f2; font-weight: bold; text-align: left\"\n"
+						+ "  >\n"
+						+ "    <tr>\n"
+						+ "      <th>Staff ID</th>\n"
+						+ "      <th>First Name</th>\n"
+						+ "      <th>Middle Name</th>\n"
+						+ "      <th>Last Name</th>\n"
+						+ "      <th>Month</th>\n"
+						+ "      <th>Year</th>\n"
+						+ "      <th>Amount</th>\n"
+						+ "    </tr>\n"
+						+ "  </thead>\n"
+						+ "\n"
+						+ "  <tbody>\n"
+						+ "\n");
+						while(rs.next()) {
+							out.println(""
+									+ "    <tr>\n"
+									+ "      <td>" + rs.getInt(1) + "</td>\n"
+									+ "      <td>" + rs.getString(2) + "</td>\n"
+									+ "      <td>" + rs.getString(3) + "</td>\n"
+									+ "      <td>" + rs.getString(4) + "</td>\n"
+									+ "      <td>" + rs.getString(5) + "</td>\n"
+									+ "      <td>" + rs.getInt(6) + "</td>\n"
+									+ "      <td>" + rs.getInt(7) + "</td>\n"
+									+ "    </tr>\n");
 						}
 						
 						out.println(""
-						+ "        </select>\n"
-						+ "      <div style=\"margin-top: 15px\">\n"
-						+ "        <label>Salary Amount</label><br />\n"
-						+ "        <input\n"
-						+ "          type=\"text\"\n"
-						+ "          name=\"amount\"\n"
-						+ "          required\n"
-						+ "          pattern=\"^[0-9]+(\\.[0-9]{1,2})?$\"\n"
-						+ "          placeholder=\"Enter amount\"\n"
-						+ "          title=\"Enter a valid amount (numbers only, up to 2 decimals)\"\n"
-						+ "          style=\"padding: 5px; width: 200px\"\n"
-						+ "        />\n"
-						+ "      </div>"
-						+ "      </div>\n"
 						+ "\n"
-						+ "      <button type=\"submit\" style=\"margin-top: 20px; padding: 8px 20px\">\n"
-						+ "        Pay\n"
-						+ "      </button>\n"
-						+ "    </form>");
+						+ "  </tbody>\n"
+						+ "</table>\n"
+						+ "");
 			}
 			
 			
@@ -194,60 +178,8 @@ public class SalaryServlet extends HttpServlet {
 		}
 	}
 
-	protected void doPost(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		try {
-			Class.forName(getServletContext().getInitParameter("Driver"));
-		} catch (ClassNotFoundException ex) {
-			ex.printStackTrace();
-		}
-
-		try (Connection conn = DriverManager.getConnection(getServletContext().getInitParameter("DbUrl"),
-				getServletContext().getInitParameter("DbUser"), getServletContext().getInitParameter("DbPassword"))) {
-			// Session Tracking
-			HttpSession session = request.getSession(false);
-
-			if (!Auth.checkSession(response, session, "admin", 3, 3)) {
-				return;
-			}
-			
-			String month = request.getParameter("m");
-			int year;
-			int staffId;
-			float amount;
-			try {
-				year = Integer.parseInt(request.getParameter("y"));
-				staffId = Integer.parseInt(request.getParameter("staff"));
-				amount = Float.parseFloat(request.getParameter("amount"));
-			} catch (NumberFormatException | NullPointerException ex) {
-				ex.printStackTrace();
-				response.sendRedirect("status?c=4&r=2");
-				return;
-			}
-			
-			List<String> months = Arrays.stream(Month.values())
-                    .map(Month::name)
-                    .toList();
-
-			boolean validMonth = months.contains(month);
-			if (!validMonth) {
-				response.sendRedirect("status?c=4&r=2");
-				return;
-			}
-			
-			if (Salary.addPayment(conn, month, year, staffId, amount)) {
-				response.sendRedirect("sreport?m=" + month + "&y=" + year);
-				return;
-			} else {
-				response.sendRedirect("status?r=2");
-				return;
-			}
-			
-
-		} catch (SQLException ex) {
-			response.sendRedirect("status");
-			ex.printStackTrace();
-		}
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.sendRedirect("status&e=method_not_supported");
 	}
 
 }

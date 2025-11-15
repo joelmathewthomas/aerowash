@@ -17,7 +17,7 @@ public class Salary {
 			pst.setString(1, month);
 			pst.setInt(2, year);
 
-			return pst.executeQuery(); // return open ResultSet
+			return pst.executeQuery(); 
 		} catch (SQLException ex) {
 			ex.printStackTrace();
 			return null;
@@ -57,6 +57,22 @@ public class Salary {
 				e.printStackTrace();
 			}
 			return false;
+		}
+	}
+
+	public static ResultSet getReport(Connection conn, String month, int year) {
+
+		try {
+			PreparedStatement pst = conn
+					.prepareStatement("SELECT s.staff_id, s.staff_fname, s.staff_mname, s.staff_lname, sa.salary_month, sa.salary_year, sa.salary_amount FROM staff s INNER JOIN salary sa ON sa.staff_id = s.staff_id WHERE sa.salary_month = ? AND sa.salary_year = ?");
+
+			pst.setString(1, month);
+			pst.setInt(2, year);
+
+			return pst.executeQuery(); 
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+			return null;
 		}
 	}
 }

@@ -278,6 +278,26 @@
 		<url-pattern>/salary</url-pattern>
 	</servlet-mapping>
 
+	<servlet>
+		<servlet-name>SalaryReportServlet</servlet-name>
+		<servlet-class>com.aerowash.report.SalaryReportServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>SalaryReportServlet</servlet-name>
+		<url-pattern>/sreport</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>ReportServlet</servlet-name>
+		<servlet-class>com.aerowash.report.ReportServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>ReportServlet</servlet-name>
+		<url-pattern>/report</url-pattern>
+	</servlet-mapping>
+
 	<context-param>
 		<param-name>Driver</param-name>
 		<param-value>com.mysql.cj.jdbc.Driver</param-value>
