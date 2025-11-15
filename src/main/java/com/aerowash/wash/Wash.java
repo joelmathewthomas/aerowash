@@ -56,7 +56,7 @@ public class Wash {
 
 		String transactionsSql = "INSERT INTO transactions (transaction_amount, transaction_status, transaction_mode) VALUES (500, 'INCOMPLETE', ?)";
 		String washSql = "INSERT INTO wash (staff_id, vehicle_id, transaction_id, wash_date) VALUES (?, ?, ?, ?)";
-		String expenseSql = "INSERT INTO expense (wash_id, expense_item, expense_amount, expense_date ) VALUES (?, 'SERVICE_CHARGE' , 500, ?)";
+		String expenseSql = "INSERT INTO expense (wash_id, expense_item, expense_amount, expense_date ) VALUES (?, 'Service Charge' , 500, ?)";
 
 		try {
 			conn.setAutoCommit(false);
