@@ -238,6 +238,16 @@
 		<url-pattern>/eadd</url-pattern>
 	</servlet-mapping>
 
+	<servlet>
+		<servlet-name>ExpenseDeleteServlet</servlet-name>
+		<servlet-class>com.aerowash.wash.expense.ExpenseDeleteServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>ExpenseDeleteServlet</servlet-name>
+		<url-pattern>/edelete</url-pattern>
+	</servlet-mapping>
+
 	<context-param>
 		<param-name>Driver</param-name>
 		<param-value>com.mysql.cj.jdbc.Driver</param-value>

@@ -80,17 +80,81 @@ public class Expense {
 						conn.rollback();
 						return false;
 					}
-					
-					try (PreparedStatement pstTransaction = conn.prepareStatement("UPDATE transactions SET transaction_amount = ? WHERE transaction_id = ?")) {
+
+					try (PreparedStatement pstTransaction = conn.prepareStatement(
+							"UPDATE transactions SET transaction_amount = ? WHERE transaction_id = ?")) {
 						pstTransaction.setFloat(1, expense_total);
 						pstTransaction.setInt(2, transaction_id);
-						
+
 						if (pstTransaction.executeUpdate() != 1) {
 							conn.rollback();
 							return false;
 						}
-						
+
 						conn.commit();
+					}
+				}
+			}
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+			return false;
+		}
+
+		return true;
+	}
+
+	public static boolean deleteRecord(Connection conn, int expense_id, int transaction_id) {
+		try {
+			conn.setAutoCommit(false);
+
+			try (PreparedStatement pstExpense = conn
+					.prepareStatement("SELECT expense_amount FROM expense WHERE expense_id = ?")) {
+				pstExpense.setInt(1, expense_id);
+
+				ResultSet rs = pstExpense.executeQuery();
+				float expense_amount;
+				if (rs.next()) {
+					expense_amount = rs.getFloat(1);
+				} else {
+					conn.rollback();
+					return false;
+				}
+
+				try (PreparedStatement pstTransaction = conn
+						.prepareStatement("SELECT transaction_amount FROM transactions WHERE transaction_id = ?")) {
+					pstTransaction.setInt(1, transaction_id);
+					rs = pstTransaction.executeQuery();
+					float transaction_amount;
+
+					if (rs.next()) {
+						transaction_amount = rs.getFloat(1);
+					} else {
+						conn.rollback();
+						return false;
+					}
+
+					float new_transaction_amount = transaction_amount - expense_amount;
+
+					try (PreparedStatement pstTransactionUpdate = conn.prepareStatement(
+							"UPDATE transactions SET transaction_amount = ? WHERE transaction_id = ?")) {
+						pstTransactionUpdate.setFloat(1, new_transaction_amount);
+						pstTransactionUpdate.setInt(2, transaction_id);
+
+						if (pstTransactionUpdate.executeUpdate() != 1) {
+							conn.rollback();
+							return false;
+						}
+
+						try (PreparedStatement pstExpenseDelete = conn
+								.prepareStatement("DELETE FROM expense WHERE expense_id = ?")) {
+							pstExpenseDelete.setInt(1, expense_id);
+							if (pstExpenseDelete.executeUpdate() != 1) {
+								conn.rollback();
+								return false;
+							}
+
+							conn.commit();
+						}
 					}
 				}
 			}

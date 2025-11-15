@@ -118,7 +118,7 @@ public class ExpenseCrudServlet extends HttpServlet {
 						if (role.equals("admin") && payment_status == 0) {
 							out.println(""
 							+ "            <td style=\"white-space: nowrap\">\n"
-							+ "             <a href=\"washview?wid=1\">Delete</a>\n"
+							+ "             <a href=\"edelete?wid=" + wash_id + "&tid=" + transaction_id + "&eid=" + rs.getInt(1) + "&s=" + payment_status + "\">Delete</a>\n"
 							+ "            </td>\n");
 						}
 
