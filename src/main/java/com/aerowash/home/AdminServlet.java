@@ -49,6 +49,7 @@ public class AdminServlet extends HttpServlet {
 					+ "            <li><a href=\"scrud\">Staff</a></li>\n"
 					+ "            <li><a href=\"customers\">Customers</a></li>\n"
 					+ "            <li><a href=\"wash\">Wash</a></li>\n"
+					+ "            <li><a href=\"salary\">Salary</a></li>\n"
 					+ "            <li><a href=\"logout\">Logout</a></li>\n"
 					+ "        </ul>\n"
 					+ "    </div>\n"
