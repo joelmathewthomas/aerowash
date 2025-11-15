@@ -23,4 +23,40 @@ public class Salary {
 			return null;
 		}
 	}
+
+	public static boolean addPayment(Connection conn, String month, int year, int staffId, float amount) {
+
+		try {
+			conn.setAutoCommit(false);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		try {
+
+			PreparedStatement pst = conn.prepareStatement(
+					"INSERT INTO `aerowash`.`salary` (`staff_id`, `salary_month`, `salary_year`, `salary_amount`) VALUES (?, ?, ?, ?)");
+			pst.setInt(1, staffId);
+			pst.setString(2, month);
+			pst.setInt(3, year);
+			pst.setFloat(4, amount);
+
+			if (pst.executeUpdate() != 1) {
+				conn.rollback();
+				return false;
+			}
+
+			conn.commit();
+			conn.setAutoCommit(true);
+			return true;
+
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+			try {
+				conn.rollback();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			return false;
+		}
+	}
 }

@@ -117,6 +117,7 @@ public class SalaryServlet extends HttpServlet {
 						+ "          type=\"text\"\n"
 						+ "          name=\"y\"\n"
 						+ "          required\n"
+						+ "          placeholder=\"Enter Year\"\n"
 						+ "          style=\"padding: 5px; width: 200px\"\n"
 						+ "        />\n"
 						+ "      </div>\n"
@@ -164,6 +165,18 @@ public class SalaryServlet extends HttpServlet {
 						
 						out.println(""
 						+ "        </select>\n"
+						+ "      <div style=\"margin-top: 15px\">\n"
+						+ "        <label>Salary Amount</label><br />\n"
+						+ "        <input\n"
+						+ "          type=\"text\"\n"
+						+ "          name=\"amount\"\n"
+						+ "          required\n"
+						+ "          pattern=\"^[0-9]+(\\.[0-9]{1,2})?$\"\n"
+						+ "          placeholder=\"Enter amount\"\n"
+						+ "          title=\"Enter a valid amount (numbers only, up to 2 decimals)\"\n"
+						+ "          style=\"padding: 5px; width: 200px\"\n"
+						+ "        />\n"
+						+ "      </div>"
 						+ "      </div>\n"
 						+ "\n"
 						+ "      <button type=\"submit\" style=\"margin-top: 20px; padding: 8px 20px\">\n"
@@ -183,9 +196,58 @@ public class SalaryServlet extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		System.out.println(request.getParameter("m"));
-		System.out.println(request.getParameter("y"));
-		System.out.println(request.getParameter("staff"));
+		try {
+			Class.forName(getServletContext().getInitParameter("Driver"));
+		} catch (ClassNotFoundException ex) {
+			ex.printStackTrace();
+		}
+
+		try (Connection conn = DriverManager.getConnection(getServletContext().getInitParameter("DbUrl"),
+				getServletContext().getInitParameter("DbUser"), getServletContext().getInitParameter("DbPassword"))) {
+			// Session Tracking
+			HttpSession session = request.getSession(false);
+
+			if (!Auth.checkSession(response, session, "admin", 3, 3)) {
+				return;
+			}
+			
+			String month = request.getParameter("m");
+			int year;
+			int staffId;
+			float amount;
+			try {
+				year = Integer.parseInt(request.getParameter("y"));
+				staffId = Integer.parseInt(request.getParameter("staff"));
+				amount = Float.parseFloat(request.getParameter("amount"));
+			} catch (NumberFormatException | NullPointerException ex) {
+				ex.printStackTrace();
+				response.sendRedirect("status?c=4&r=2");
+				return;
+			}
+			
+			List<String> months = Arrays.stream(Month.values())
+                    .map(Month::name)
+                    .toList();
+
+			boolean validMonth = months.contains(month);
+			if (!validMonth) {
+				response.sendRedirect("status?c=4&r=2");
+				return;
+			}
+			
+			if (Salary.addPayment(conn, month, year, staffId, amount)) {
+				response.sendRedirect("admin");
+				return;
+			} else {
+				response.sendRedirect("status?r=2");
+				return;
+			}
+			
+
+		} catch (SQLException ex) {
+			response.sendRedirect("status");
+			ex.printStackTrace();
+		}
 	}
 
 }
