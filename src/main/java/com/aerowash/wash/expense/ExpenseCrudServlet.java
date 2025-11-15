@@ -43,10 +43,12 @@ public class ExpenseCrudServlet extends HttpServlet {
 			String role = (String) session.getAttribute("role");
 			
 			int wash_id = 0;
+			int transaction_id = 0;
 			try {
 				wash_id = Integer.parseInt(request.getParameter("wid"));
+				transaction_id = Integer.parseInt(request.getParameter("tid"));
 			} catch (NumberFormatException ex) {
-				response.sendRedirect("status?c=4&r=6&e=invalid_wash_id");
+				response.sendRedirect("status?c=4&r=6&e=invalid_wash_id_or_transaction_id");
 				ex.printStackTrace();
 				return;
 			}
@@ -70,7 +72,7 @@ public class ExpenseCrudServlet extends HttpServlet {
 					+ "\n"
 					+ "      <ul style=\"line-height: 1.8; margin-left: 0; padding-left: 15px\">"
 					+ "        <li><a href=\"wash\">Wash</a></li>\n"
-					+ "        <li><a href=\"expense\">New item</a></li>\n"
+					+ "        <li><a href=\"eadd?wid=" + wash_id + "&tid=" + transaction_id + "\">New item</a></li>\n"
 					+ "      </ul>\n"
 					+ "    </div>\n"
 					+ "\n"
