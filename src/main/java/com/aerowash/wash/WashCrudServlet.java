@@ -104,6 +104,7 @@ public class WashCrudServlet extends HttpServlet {
 					+ "\n");
 					
 					while(rs.next()) {
+						
 						out.println(""
 								+ "        <tbody>\n"
 								+ "          <tr>\n"
@@ -123,7 +124,7 @@ public class WashCrudServlet extends HttpServlet {
 								+ "            <td>" + rs.getString(8) + "</td>\n"
 								+ "\n"
 								+ "            <td style=\"white-space: nowrap\">\n"
-								+ "[" + "              <a href=\"expense?wid=" + rs.getInt(1) + "&tid=" + rs.getInt(9) + "\">Expense</a> ] \n");
+								+ "[" + "              <a href=\"expense?wid=" + rs.getInt(1) + "&tid=" + rs.getInt(9) + "&s=" + (rs.getString(7).equals("COMPLETE") ? 1 : 0) + "\">Expense</a> ] \n");
 							
 								if (rs.getString(7).equals("INCOMPLETE")) {
 									out.println("[" + "              <a href=\"washview?wid=1\">Mark as Paid</a> ]\n");
