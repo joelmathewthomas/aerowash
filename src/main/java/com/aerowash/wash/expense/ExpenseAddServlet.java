@@ -42,6 +42,7 @@ public class ExpenseAddServlet extends HttpServlet {
 
 			int wash_id = Wash.getParam(request, "wid");
 			int transaction_id = Wash.getParam(request, "tid");
+			int payment_status = Wash.getParam(request, "s");
 
 			PrintWriter out = response.getWriter();
 			response.setContentType("text/html");
@@ -59,7 +60,7 @@ public class ExpenseAddServlet extends HttpServlet {
 					+ "      <h3>Menu</h3>\n"
 					+ "\n"
 					+ "      <ul style=\"line-height: 1.8; margin-left: 0; padding-left: 15px\">\n"
-					+ "        <li><a href=\"expense?wid=" + wash_id + "&tid=" + transaction_id + "\">Expense</a></li>\n"
+					+ "        <li><a href=\"expense?wid=" + wash_id + "&tid=" + transaction_id + "&s=" + payment_status + "\">Expense</a></li>\n"
 					+ "      </ul>\n"
 					+ "    </div>\n"
 					+ "\n"
@@ -108,6 +109,16 @@ public class ExpenseAddServlet extends HttpServlet {
 					+ "          style=\"padding: 5px; width: 200px\"\n"
 					+ "        />\n"
 					+ "      </div>\n"
+					+ "      <div style=\"margin-top: 15px\">\n"
+					+ "        <input\n"
+					+ "          type=\"text\"\n"
+					+ "          name=\"payment_status\"\n"
+					+ "          value=\"" + payment_status + "\"\n"
+					+ "          required\n"
+					+ "          hidden\n"
+					+ "          style=\"padding: 5px; width: 200px\"\n"
+					+ "        />\n"
+					+ "      </div>\n"
 					+ "      <button type=\"submit\" style=\"margin-top: 20px; padding: 8px 20px\">\n"
 					+ "        Add\n"
 					+ "      </button>\n"
@@ -144,6 +155,7 @@ public class ExpenseAddServlet extends HttpServlet {
 			
 			int wash_id = Wash.getParam(request, "wid");
 			int transaction_id = Wash.getParam(request, "tid");
+			int payment_status = Wash.getParam(request, "payment_status");
 			
 			Expense expense = Expense.getFromForm(request);
 			if (expense == null) {
@@ -158,7 +170,7 @@ public class ExpenseAddServlet extends HttpServlet {
 			}
 			
 			if (expense.addRecord(conn)) {
-				response.sendRedirect("expense?wid=" + wash_id + "&tid=" + transaction_id);
+				response.sendRedirect("expense?wid=" + wash_id + "&tid=" + transaction_id + "&s=" + payment_status);
 				return;
 			} else {
 				response.sendRedirect("status?c=4&r=6&e=failed_to_add_new_item"  );
