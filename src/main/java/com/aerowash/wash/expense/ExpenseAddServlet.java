@@ -126,6 +126,49 @@ public class ExpenseAddServlet extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		try {
+			Class.forName(getServletContext().getInitParameter("Driver"));
+		} catch (ClassNotFoundException ex) {
+			ex.printStackTrace();
+		}
+
+		try (Connection conn = DriverManager.getConnection(getServletContext().getInitParameter("DbUrl"),
+				getServletContext().getInitParameter("DbUser"), getServletContext().getInitParameter("DbPassword"))) {
+			// Session Tracking
+			HttpSession session = request.getSession(false);
+
+			// Check session
+			if (!Auth.checkSession(response, session, "all")) {
+				return;
+			}
+			
+			int wash_id = Wash.getParam(request, "wid");
+			int transaction_id = Wash.getParam(request, "tid");
+			
+			Expense expense = Expense.getFromForm(request);
+			if (expense == null) {
+				response.sendRedirect("status");
+				return;
+			}
+
+			String error = expense.validateForm();
+			if (error != null) {
+				response.sendRedirect("status?c=4&r=6&e=" + error);
+				return;
+			}
+			
+			if (expense.addRecord(conn)) {
+				response.sendRedirect("expense?wid=" + wash_id + "&tid=" + transaction_id);
+				return;
+			} else {
+				response.sendRedirect("status?c=4&r=6&e=failed_to_add_new_item"  );
+				return;
+			}
+
+		} catch (SQLException ex) {
+			response.sendRedirect("status");
+			ex.printStackTrace();
+		}	
 	}
 
 }

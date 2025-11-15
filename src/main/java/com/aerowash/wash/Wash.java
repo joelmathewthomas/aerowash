@@ -25,10 +25,7 @@ public class Wash {
 		if (staffId == 0)
 			return null;
 
-		String baseQuery = "SELECT w.wash_id, w.staff_id, w.vehicle_id, w.wash_date, "
-				+ "t.transaction_date, t.transaction_amount, " + "t.transaction_status, t.transaction_mode, t.transaction_id "
-				+ "FROM transactions t " + "JOIN wash w ON t.transaction_id = w.transaction_id "
-				+ "LEFT JOIN expense e ON w.wash_id = e.wash_id";
+		String baseQuery = "SELECT w.wash_id, w.staff_id, w.vehicle_id, w.wash_date, t.transaction_date, t.transaction_amount, t.transaction_status, t.transaction_mode, t.transaction_id FROM transactions t JOIN wash w ON t.transaction_id = w.transaction_id";
 
 		try {
 			PreparedStatement pst;
