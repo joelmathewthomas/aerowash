@@ -247,6 +247,16 @@
 		<servlet-name>ExpenseDeleteServlet</servlet-name>
 		<url-pattern>/edelete</url-pattern>
 	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>TransactionMarkPaymentServlet</servlet-name>
+		<servlet-class>com.aerowash.wash.transactions.TransactionMarkPaymentServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>TransactionMarkPaymentServlet</servlet-name>
+		<url-pattern>/tmark</url-pattern>
+	</servlet-mapping>
 
 	<context-param>
 		<param-name>Driver</param-name>

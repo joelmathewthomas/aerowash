@@ -127,9 +127,9 @@ public class WashCrudServlet extends HttpServlet {
 								+ "[" + "              <a href=\"expense?wid=" + rs.getInt(1) + "&tid=" + rs.getInt(9) + "&s=" + (rs.getString(7).equals("COMPLETE") ? 1 : 0) + "\">Expense</a> ] \n");
 							
 								if (rs.getString(7).equals("INCOMPLETE")) {
-									out.println("[" + "              <a href=\"washview?wid=1\">Mark as Paid</a> ]\n");
+									out.println("[" + "              <a href=\"tmark?tid=" + rs.getInt(9) + "&c=1" + "\">Mark as Paid</a> ]\n");
 								} else if (rs.getString(7).equals("COMPLETE") && role.equals("admin")) {
-									out.println("[" + "              <a href=\"washview?wid=1\">Mark as Unpaid</a> ]\n");
+									out.println("[" + "              <a href=\"tmark?tid=" + rs.getInt(9) + "&c=0" + "\">Mark as Unpaid</a> ]\n");
 								}
 								
 								if (role.equals("admin")) {
