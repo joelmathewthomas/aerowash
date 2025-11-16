@@ -70,11 +70,8 @@ public class CustomersCrudServlet extends HttpServlet {
 						out.println("        <li><a href=\"staff\">Home</a></li>\n");
 					}
 			
-					if (role.equals("staff")) {
-						out.println("        <li><a href=\"cadd\">Add customer</a></li>\n");
-					}
-					
 					out.println(""
+					+ "        <li><a href=\"cadd\">Add customer</a></li>\n"
 					+ "      </ul>\n"
 					+ "    </div>\n"
 					+ "\n"

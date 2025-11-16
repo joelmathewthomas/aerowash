@@ -35,7 +35,7 @@ public class FlatDeleteServlet extends HttpServlet {
 			int flat_id;
 			int customer_id;
 
-			if (!Auth.checkSession(response, session, "staff", 3, 2)) {
+			if (!Auth.checkSession(response, session, "all")) {
 				return;
 			}
 			

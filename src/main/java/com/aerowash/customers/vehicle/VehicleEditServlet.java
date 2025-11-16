@@ -47,7 +47,7 @@ public class VehicleEditServlet extends HttpServlet {
 				ex.printStackTrace();
 			}
 
-			if (!Auth.checkSession(response, session, "staff", 3, 2)) {
+			if (!Auth.checkSession(response, session, "all")) {
 				return;
 			}
 
@@ -191,7 +191,7 @@ public class VehicleEditServlet extends HttpServlet {
 				ex.printStackTrace();
 			}
 
-			if (!Auth.checkSession(response, session, "staff", 3, 2)) {
+			if (!Auth.checkSession(response, session, "all")) {
 				return;
 			}
 

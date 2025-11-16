@@ -27,7 +27,7 @@ public class CustomerEditServlet extends HttpServlet {
 			// Session Tracking
 			HttpSession session = request.getSession(false);
 
-			if (!Auth.checkSession(response, session, "staff", 3, 2)) {
+			if (!Auth.checkSession(response, session, "all")) {
 				return;
 			}
 
@@ -158,7 +158,7 @@ public class CustomerEditServlet extends HttpServlet {
 			HttpSession session = request.getSession(false);
 			int customer_id = (request.getParameter("customer_id") == null) ? 0 : Integer.parseInt(request.getParameter("customer_id"));
 			
-			if (!Auth.checkSession(response, session, "staff", 3, 2)) {
+			if (!Auth.checkSession(response, session, "all")) {
 				return;
 			}
 

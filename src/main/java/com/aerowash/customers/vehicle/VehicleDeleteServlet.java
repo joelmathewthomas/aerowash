@@ -32,7 +32,7 @@ public class VehicleDeleteServlet extends HttpServlet {
 			// Session Tracking
 			HttpSession session = request.getSession(false);
 			
-			if (!Auth.checkSession(response, session, "staff", 3, 2)) {
+			if (!Auth.checkSession(response, session, "all")) {
 				return;
 			}
 
