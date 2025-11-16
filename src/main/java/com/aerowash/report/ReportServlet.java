@@ -41,6 +41,7 @@ public class ReportServlet extends HttpServlet {
 				+ "\n"
 				+ "      <ul style=\"line-height: 1.8\">\n"
 				+ "        <li><a href=\"admin\">Home</a></li>\n"
+				+ "        <li><a href=\"ereport\">Expense Report</a></li>\n"
 				+ "        <li><a href=\"sreport\">Salary Report</a></li>\n"
 				+ "      </ul>\n"
 				+ "    </div>\n"

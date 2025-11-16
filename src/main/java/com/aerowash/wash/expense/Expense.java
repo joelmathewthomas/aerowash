@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.Month;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -177,6 +178,24 @@ public class Expense {
 
 			return pst.executeQuery();
 
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+			return null;
+		}
+	}
+
+	public static ResultSet getReport(Connection conn, String month, int year) {
+		int monthValue = Month.valueOf(month).getValue();
+		String sql = "SELECT * FROM expense WHERE MONTH(expense_date) = ? AND YEAR(expense_date) = ?";
+
+		try {
+			PreparedStatement pst;
+			pst = conn.prepareStatement(sql);
+
+			pst.setInt(1, monthValue);
+			pst.setInt(2, year);
+
+			return pst.executeQuery();
 		} catch (SQLException ex) {
 			ex.printStackTrace();
 			return null;

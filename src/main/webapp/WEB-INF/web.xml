@@ -289,6 +289,17 @@
 	</servlet-mapping>
 
 	<servlet>
+		<servlet-name>ExpenseReportServlet</servlet-name>
+		<servlet-class>com.aerowash.report.ExpenseReportServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>ExpenseReportServlet</servlet-name>
+		<url-pattern>/ereport</url-pattern>
+	</servlet-mapping>
+
+
+	<servlet>
 		<servlet-name>ReportServlet</servlet-name>
 		<servlet-class>com.aerowash.report.ReportServlet</servlet-class>
 	</servlet>
