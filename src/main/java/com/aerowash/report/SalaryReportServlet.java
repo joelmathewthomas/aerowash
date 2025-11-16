@@ -84,7 +84,7 @@ public class SalaryReportServlet extends HttpServlet {
 					+ "      </ul>\n"
 					+ "    </div>\n"
 					+ "\n"
-					+ "    <h2>Salary Payment</h2>");
+					+ "    <h2>Salary Report</h2>");
 			
 			if (!(validMonth && year > 2010 && year <= LocalDate.now().getYear())) {
 				out.println("    <form\n"
